@@ -137,10 +137,6 @@ role_policies_list = {}
 
 
 def exit_aws2tf(mess):
-    if mess is not None or mess != "":
+    if mess is not None and mess != "":
         log.error(mess)
-
-    if context.fast:
-        sys.exit(1)
-    else:
-        sys.exit(1)
+    sys.exit(1)
