@@ -11,7 +11,7 @@ sso = False
 merge = False
 fast = False
 apionly = False
-tracking_message = "aws2tf: Starting, update messages every 20 seconds"
+tracking_message: str = "aws2tf: Starting, update messages every 20 seconds"
 cores = 2
 cwd = ""
 path1 = ""
@@ -93,7 +93,7 @@ elastirep = False
 elastigrep = False
 elasticc = False
 kinesismsk = False
-destbuck = False
+destbuck: bool = False
 
 badlist = []
 

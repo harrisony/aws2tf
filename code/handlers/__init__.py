@@ -11,3 +11,5 @@ package is imported.
 """
 
 from handlers import lambda_  # noqa: F401
+from handlers import iam      # noqa: F401
+from handlers import s3       # noqa: F401
