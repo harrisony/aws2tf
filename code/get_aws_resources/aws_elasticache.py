@@ -1,87 +1,153 @@
 import common
 import logging
-log = logging.getLogger('aws2tf')
+
+log = logging.getLogger("aws2tf")
 import boto3
 from botocore.config import Config
 import context
 import inspect, sys
 
+
 def get_aws_elasticache_cluster(type, id, clfn, descfn, topkey, key, filterid):
     if context.debug:
-        log.debug("--> In "+str(inspect.currentframe().f_code.co_name)+" doing " + type + ' with id ' + str(id) +
-              " clfn="+clfn+" descfn="+descfn+" topkey="+topkey+" key="+key+" filterid="+filterid)
+        log.debug(
+            "--> In "
+            + str(inspect.currentframe().f_code.co_name)
+            + " doing "
+            + type
+            + " with id "
+            + str(id)
+            + " clfn="
+            + clfn
+            + " descfn="
+            + descfn
+            + " topkey="
+            + topkey
+            + " key="
+            + key
+            + " filterid="
+            + filterid
+        )
     try:
         response = []
-        config = Config(retries = {'max_attempts': 10,'mode': 'standard'})
-        client = boto3.client(clfn,config=config)
+        config = Config(retries={"max_attempts": 10, "mode": "standard"})
+        client = boto3.client(clfn, config=config)
         if id is None:
             paginator = client.get_paginator(descfn)
             for page in paginator.paginate():
                 response = response + page[topkey]
-            if response == []: 
-                if context.debug: log.debug("Empty response for "+type+ " id="+str(id)+" returning") 
+            if response == []:
+                if context.debug:
+                    log.debug(
+                        "Empty response for " + type + " id=" + str(id) + " returning"
+                    )
                 return True
             for j in response:
-                common.write_import(type,j[key],None) 
+                common.write_import(type, j[key], None)
 
-        else:      
+        else:
             try:
                 response = client.describe_cache_clusters(CacheClusterId=id)
             except Exception as e:
                 exc_type, exc_obj, exc_tb = sys.exc_info()
-                exn=str(exc_type.__name__)
-                if exn=="CacheClusterNotFoundFault":
-                    if context.debug: log.debug("CacheClusterNotFoundFault for "+type+ " id="+str(id)+" returning")
+                exn = str(exc_type.__name__)
+                if exn == "CacheClusterNotFoundFault":
+                    if context.debug:
+                        log.debug(
+                            "CacheClusterNotFoundFault for "
+                            + type
+                            + " id="
+                            + str(id)
+                            + " returning"
+                        )
                     return True
                 return True
-            if response['CacheClusters'] == []: 
-                if context.debug: log.debug("Empty response for "+type+ " id="+str(id)+" returning") 
+            if response["CacheClusters"] == []:
+                if context.debug:
+                    log.debug(
+                        "Empty response for " + type + " id=" + str(id) + " returning"
+                    )
                 return True
             for j in response[topkey]:
-                common.write_import(type,j[key],None)
+                common.write_import(type, j[key], None)
 
     except Exception as e:
-        common.handle_error(e,str(inspect.currentframe().f_code.co_name),clfn,descfn,topkey,id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
 
     return True
 
+
 # aws_elasticache_serverless_cache
+
 
 def get_aws_elasticache_serverless_cache(type, id, clfn, descfn, topkey, key, filterid):
     if context.debug:
-        log.debug("--> In "+str(inspect.currentframe().f_code.co_name)+" doing " + type + ' with id ' + str(id) +
-              " clfn="+clfn+" descfn="+descfn+" topkey="+topkey+" key="+key+" filterid="+filterid)
+        log.debug(
+            "--> In "
+            + str(inspect.currentframe().f_code.co_name)
+            + " doing "
+            + type
+            + " with id "
+            + str(id)
+            + " clfn="
+            + clfn
+            + " descfn="
+            + descfn
+            + " topkey="
+            + topkey
+            + " key="
+            + key
+            + " filterid="
+            + filterid
+        )
     try:
         response = []
-        config = Config(retries = {'max_attempts': 10,'mode': 'standard'})
-        client = boto3.client(clfn,config=config)
+        config = Config(retries={"max_attempts": 10, "mode": "standard"})
+        client = boto3.client(clfn, config=config)
         if id is None:
             paginator = client.get_paginator(descfn)
             for page in paginator.paginate():
                 response = response + page[topkey]
-            if response == []: 
-                if context.debug: log.debug("Empty response for "+type+ " id="+str(id)+" returning") 
+            if response == []:
+                if context.debug:
+                    log.debug(
+                        "Empty response for " + type + " id=" + str(id) + " returning"
+                    )
                 return True
             for j in response:
-                common.write_import(type,j[key],None) 
+                common.write_import(type, j[key], None)
 
-        else:    
+        else:
             try:
-                response = client.describe_serverless_caches(ServerlessCacheName=id)  
+                response = client.describe_serverless_caches(ServerlessCacheName=id)
             except Exception as e:
                 exc_type, exc_obj, exc_tb = sys.exc_info()
-                exn=str(exc_type.__name__)
-                if exn=="CacheClusterNotFoundFault":
-                    if context.debug: log.debug("CacheClusterNotFoundFault for "+type+ " id="+str(id)+" returning")
+                exn = str(exc_type.__name__)
+                if exn == "CacheClusterNotFoundFault":
+                    if context.debug:
+                        log.debug(
+                            "CacheClusterNotFoundFault for "
+                            + type
+                            + " id="
+                            + str(id)
+                            + " returning"
+                        )
                     return True
                 return True
-            if response['ServerlessCaches'] == []: 
-                if context.debug: log.debug("Empty response for "+type+ " id="+str(id)+" returning") 
+            if response["ServerlessCaches"] == []:
+                if context.debug:
+                    log.debug(
+                        "Empty response for " + type + " id=" + str(id) + " returning"
+                    )
                 return True
-            j=response['ServerlessCaches']
-            common.write_import(type,j[key],None)
+            j = response["ServerlessCaches"]
+            common.write_import(type, j[key], None)
 
     except Exception as e:
-        common.handle_error(e,str(inspect.currentframe().f_code.co_name),clfn,descfn,topkey,id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
 
     return True

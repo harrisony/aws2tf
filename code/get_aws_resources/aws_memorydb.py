@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import logging
-log = logging.getLogger('aws2tf')
+
+log = logging.getLogger("aws2tf")
 import boto3
 import common
 import context
@@ -10,9 +11,9 @@ from botocore.config import Config
 
 def get_aws_memorydb_subnet_group(type, id, clfn, descfn, topkey, key, filterid):
     try:
-        config = Config(retries = {'max_attempts': 10,'mode': 'standard'})
+        config = Config(retries={"max_attempts": 10, "mode": "standard"})
         client = boto3.client(clfn, config=config)
-        
+
         if id is None:
             paginator = client.get_paginator(descfn)
             response = []
@@ -25,15 +26,17 @@ def get_aws_memorydb_subnet_group(type, id, clfn, descfn, topkey, key, filterid)
             if response[topkey]:
                 common.write_import(type, id, None)
     except Exception as e:
-        common.handle_error(e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
     return True
 
 
 def get_aws_memorydb_parameter_group(type, id, clfn, descfn, topkey, key, filterid):
     try:
-        config = Config(retries = {'max_attempts': 10,'mode': 'standard'})
+        config = Config(retries={"max_attempts": 10, "mode": "standard"})
         client = boto3.client(clfn, config=config)
-        
+
         if id is None:
             paginator = client.get_paginator(descfn)
             response = []
@@ -41,24 +44,26 @@ def get_aws_memorydb_parameter_group(type, id, clfn, descfn, topkey, key, filter
                 response.extend(page[topkey])
             for j in response:
                 # Skip default parameter groups (AWS managed)
-                if not j[key].startswith('default'):
+                if not j[key].startswith("default"):
                     common.write_import(type, j[key], None)
         else:
             # Skip default parameter groups (AWS managed)
-            if not id.startswith('default'):
+            if not id.startswith("default"):
                 response = client.describe_parameter_groups(ParameterGroupName=id)
                 if response[topkey]:
                     common.write_import(type, id, None)
     except Exception as e:
-        common.handle_error(e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
     return True
 
 
 def get_aws_memorydb_user(type, id, clfn, descfn, topkey, key, filterid):
     try:
-        config = Config(retries = {'max_attempts': 10,'mode': 'standard'})
+        config = Config(retries={"max_attempts": 10, "mode": "standard"})
         client = boto3.client(clfn, config=config)
-        
+
         if id is None:
             paginator = client.get_paginator(descfn)
             response = []
@@ -66,29 +71,31 @@ def get_aws_memorydb_user(type, id, clfn, descfn, topkey, key, filterid):
                 response.extend(page[topkey])
             for j in response:
                 # Skip users with no-password authentication (not supported by Terraform)
-                auth_mode = j.get('Authentication', {})
-                auth_type = auth_mode.get('Type', '')
-                if auth_type != 'no-password':
+                auth_mode = j.get("Authentication", {})
+                auth_type = auth_mode.get("Type", "")
+                if auth_type != "no-password":
                     common.write_import(type, j[key], None)
         else:
             response = client.describe_users(UserName=id)
             if response[topkey]:
                 # Skip users with no-password authentication (not supported by Terraform)
                 user = response[topkey][0]
-                auth_mode = user.get('Authentication', {})
-                auth_type = auth_mode.get('Type', '')
-                if auth_type != 'no-password':
+                auth_mode = user.get("Authentication", {})
+                auth_type = auth_mode.get("Type", "")
+                if auth_type != "no-password":
                     common.write_import(type, id, None)
     except Exception as e:
-        common.handle_error(e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
     return True
 
 
 def get_aws_memorydb_acl(type, id, clfn, descfn, topkey, key, filterid):
     try:
-        config = Config(retries = {'max_attempts': 10,'mode': 'standard'})
+        config = Config(retries={"max_attempts": 10, "mode": "standard"})
         client = boto3.client(clfn, config=config)
-        
+
         if id is None:
             paginator = client.get_paginator(descfn)
             response = []
@@ -101,15 +108,17 @@ def get_aws_memorydb_acl(type, id, clfn, descfn, topkey, key, filterid):
             if response[topkey]:
                 common.write_import(type, id, None)
     except Exception as e:
-        common.handle_error(e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
     return True
 
 
 def get_aws_memorydb_cluster(type, id, clfn, descfn, topkey, key, filterid):
     try:
-        config = Config(retries = {'max_attempts': 10,'mode': 'standard'})
+        config = Config(retries={"max_attempts": 10, "mode": "standard"})
         client = boto3.client(clfn, config=config)
-        
+
         if id is None:
             paginator = client.get_paginator(descfn)
             response = []
@@ -122,15 +131,17 @@ def get_aws_memorydb_cluster(type, id, clfn, descfn, topkey, key, filterid):
             if response[topkey]:
                 common.write_import(type, id, None)
     except Exception as e:
-        common.handle_error(e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
     return True
 
 
 def get_aws_memorydb_snapshot(type, id, clfn, descfn, topkey, key, filterid):
     try:
-        config = Config(retries = {'max_attempts': 10,'mode': 'standard'})
+        config = Config(retries={"max_attempts": 10, "mode": "standard"})
         client = boto3.client(clfn, config=config)
-        
+
         if id is None:
             paginator = client.get_paginator(descfn)
             response = []
@@ -143,15 +154,19 @@ def get_aws_memorydb_snapshot(type, id, clfn, descfn, topkey, key, filterid):
             if response[topkey]:
                 common.write_import(type, id, None)
     except Exception as e:
-        common.handle_error(e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
     return True
 
 
-def get_aws_memorydb_multi_region_cluster(type, id, clfn, descfn, topkey, key, filterid):
+def get_aws_memorydb_multi_region_cluster(
+    type, id, clfn, descfn, topkey, key, filterid
+):
     try:
-        config = Config(retries = {'max_attempts': 10,'mode': 'standard'})
+        config = Config(retries={"max_attempts": 10, "mode": "standard"})
         client = boto3.client(clfn, config=config)
-        
+
         if id is None:
             paginator = client.get_paginator(descfn)
             response = []
@@ -164,5 +179,7 @@ def get_aws_memorydb_multi_region_cluster(type, id, clfn, descfn, topkey, key, f
             if response[topkey]:
                 common.write_import(type, id, None)
     except Exception as e:
-        common.handle_error(e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
     return True

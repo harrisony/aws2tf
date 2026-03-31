@@ -1,99 +1,188 @@
 import common
 from common import log_warning
 import logging
-log = logging.getLogger('aws2tf')
+
+log = logging.getLogger("aws2tf")
 import boto3
 import context
 import inspect
 
+
 def get_aws_ssm_document(type, id, clfn, descfn, topkey, key, filterid):
     if context.debug:
-        log.debug("--> In "+str(inspect.currentframe().f_code.co_name)+" doing " + type + ' with id ' + str(id) +
-              " clfn="+clfn+" descfn="+descfn+" topkey="+topkey+" key="+key+" filterid="+filterid)
+        log.debug(
+            "--> In "
+            + str(inspect.currentframe().f_code.co_name)
+            + " doing "
+            + type
+            + " with id "
+            + str(id)
+            + " clfn="
+            + clfn
+            + " descfn="
+            + descfn
+            + " topkey="
+            + topkey
+            + " key="
+            + key
+            + " filterid="
+            + filterid
+        )
     try:
         response = []
         client = boto3.client(clfn)
         if id is None:
             paginator = client.get_paginator(descfn)
-            for page in paginator.paginate(Filters=[{'Key': 'Owner','Values': ['Self']}]):
+            for page in paginator.paginate(
+                Filters=[{"Key": "Owner", "Values": ["Self"]}]
+            ):
                 response = response + page[topkey]
-            if response == []: 
-                log.debug("Empty response for "+type+ " id="+str(id)+" returning")
+            if response == []:
+                log.debug(
+                    "Empty response for " + type + " id=" + str(id) + " returning"
+                )
                 return True
             for j in response:
-                common.write_import(type,j[key],None) 
+                common.write_import(type, j[key], None)
 
-        else:      
+        else:
             response = client.describe_document(Name=id)
-            if response == []: 
-                log.debug("Empty response for "+type+ " id="+str(id)+" returning")
+            if response == []:
+                log.debug(
+                    "Empty response for " + type + " id=" + str(id) + " returning"
+                )
                 return True
-            j=response['Document']
-            common.write_import(type,id,None)
+            j = response["Document"]
+            common.write_import(type, id, None)
 
     except Exception as e:
-        common.handle_error(e,str(inspect.currentframe().f_code.co_name),clfn,descfn,topkey,id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
 
     return True
 
+
 def get_aws_ssm_association(type, id, clfn, descfn, topkey, key, filterid):
     if context.debug:
-        log.debug("--> In "+str(inspect.currentframe().f_code.co_name)+" doing " + type + ' with id ' + str(id) +
-              " clfn="+clfn+" descfn="+descfn+" topkey="+topkey+" key="+key+" filterid="+filterid)
+        log.debug(
+            "--> In "
+            + str(inspect.currentframe().f_code.co_name)
+            + " doing "
+            + type
+            + " with id "
+            + str(id)
+            + " clfn="
+            + clfn
+            + " descfn="
+            + descfn
+            + " topkey="
+            + topkey
+            + " key="
+            + key
+            + " filterid="
+            + filterid
+        )
     try:
         response = []
         client = boto3.client(clfn)
         if id is not None and "-" in id:
             paginator = client.get_paginator(descfn)
-            for page in paginator.paginate(AssociationFilterList=[{'key': 'AssociationId','value': id}]):
+            for page in paginator.paginate(
+                AssociationFilterList=[{"key": "AssociationId", "value": id}]
+            ):
                 response = response + page[topkey]
-            if response == []: 
-                log.debug("Empty response for "+type+ " id="+str(id)+" returning")
+            if response == []:
+                log.debug(
+                    "Empty response for " + type + " id=" + str(id) + " returning"
+                )
                 return True
             for j in response:
-                common.write_import(type,j[key],"a-"+j[key]) 
+                common.write_import(type, j[key], "a-" + j[key])
 
-        else:      
-            log_warning("WARNING: No id or invalid provided for "+type)
+        else:
+            log_warning("WARNING: No id or invalid provided for " + type)
             return True
 
     except Exception as e:
-        common.handle_error(e,str(inspect.currentframe().f_code.co_name),clfn,descfn,topkey,id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
 
     return True
 
+
 def get_aws_ssm_default_patch_baseline(type, id, clfn, descfn, topkey, key, filterid):
     if context.debug:
-        log.debug("--> In "+str(inspect.currentframe().f_code.co_name)+" doing " + type + ' with id ' + str(id) +
-              " clfn="+clfn+" descfn="+descfn+" topkey="+topkey+" key="+key+" filterid="+filterid)
+        log.debug(
+            "--> In "
+            + str(inspect.currentframe().f_code.co_name)
+            + " doing "
+            + type
+            + " with id "
+            + str(id)
+            + " clfn="
+            + clfn
+            + " descfn="
+            + descfn
+            + " topkey="
+            + topkey
+            + " key="
+            + key
+            + " filterid="
+            + filterid
+        )
     try:
         response = []
         client = boto3.client(clfn)
         if id is None:
             response = client.get_default_patch_baseline()
-            if response == []: 
-                log.debug("Empty response for "+type+ " id="+str(id)+" returning")
+            if response == []:
+                log.debug(
+                    "Empty response for " + type + " id=" + str(id) + " returning"
+                )
                 return True
-            j= response
-            common.write_import(type,j['BaselineId'],None) 
+            j = response
+            common.write_import(type, j["BaselineId"], None)
 
-        else:      
+        else:
             response = client.get_default_patch_baseline(OperatingSystem=id)
-            if response == []: 
-                log.debug("Empty response for "+type+ " id="+str(id)+" returning")
+            if response == []:
+                log.debug(
+                    "Empty response for " + type + " id=" + str(id) + " returning"
+                )
                 return True
-            j= response
-            common.write_import(type,j['BaselineId'],None) 
+            j = response
+            common.write_import(type, j["BaselineId"], None)
 
     except Exception as e:
-        common.handle_error(e,str(inspect.currentframe().f_code.co_name),clfn,descfn,topkey,id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
 
     return True
 
+
 def get_aws_ssm_patch_baseline(type, id, clfn, descfn, topkey, key, filterid):
     if context.debug:
-        log.debug("--> In "+str(inspect.currentframe().f_code.co_name)+" doing " + type + ' with id ' + str(id) +
-              " clfn="+clfn+" descfn="+descfn+" topkey="+topkey+" key="+key+" filterid="+filterid)
+        log.debug(
+            "--> In "
+            + str(inspect.currentframe().f_code.co_name)
+            + " doing "
+            + type
+            + " with id "
+            + str(id)
+            + " clfn="
+            + clfn
+            + " descfn="
+            + descfn
+            + " topkey="
+            + topkey
+            + " key="
+            + key
+            + " filterid="
+            + filterid
+        )
     try:
         response = []
         client = boto3.client(clfn)
@@ -101,24 +190,29 @@ def get_aws_ssm_patch_baseline(type, id, clfn, descfn, topkey, key, filterid):
             paginator = client.get_paginator(descfn)
             for page in paginator.paginate():
                 response = response + page[topkey]
-            if response == []: 
-                log.debug("Empty response for "+type+ " id="+str(id)+" returning")
+            if response == []:
+                log.debug(
+                    "Empty response for " + type + " id=" + str(id) + " returning"
+                )
                 return True
             for j in response:
-                theid=j[key]
+                theid = j[key]
                 if theid.startswith("pb-"):
-                    common.write_import(type,j[key],None) 
+                    common.write_import(type, j[key], None)
 
-        else:      
+        else:
             response = client.get_patch_baseline(BaselineId=id)
-            if response == []: 
-                log.debug("Empty response for "+type+ " id="+str(id)+" returning")
+            if response == []:
+                log.debug(
+                    "Empty response for " + type + " id=" + str(id) + " returning"
+                )
                 return True
-            j= response
-            common.write_import(type,j['BaselineId'],None) 
+            j = response
+            common.write_import(type, j["BaselineId"], None)
 
     except Exception as e:
-        common.handle_error(e,str(inspect.currentframe().f_code.co_name),clfn,descfn,topkey,id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
 
     return True
-
