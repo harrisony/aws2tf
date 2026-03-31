@@ -951,11 +951,10 @@ def call_resource(type, id):
 
     except AttributeError as e:
         if context.debug:
-            log.debug("AttributeError: name 'getfn' - no aws_" + clfn + ".py file ?")
-            log.debug(f"{e=}")
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            log.debug("%s %s %s %s", exc_type, fname, exc_tb.tb_lineno)
+            log.debug(
+                "AttributeError: name 'getfn' - no aws_" + clfn + ".py file ?",
+                exc_info=True,
+            )
         pass
 
     except SyntaxError:
@@ -965,13 +964,9 @@ def call_resource(type, id):
     except NameError as e:
         if context.debug:
             log.debug(
-                "WARNING: NameError: name 'getfn' - no aws_" + clfn + ".py file ?"
+                "WARNING: NameError: name 'getfn' - no aws_" + clfn + ".py file ?",
+                exc_info=True,
             )
-            log.debug(f"{e=}")
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            log.debug("%s %s %s %s", exc_type, fname, exc_tb.tb_lineno)
-
         pass
 
     except Exception as e:
@@ -1000,14 +995,9 @@ def call_resource(type, id):
                 )
             rr = getresource(type, id, clfn, descfn, topkey, key, filterid)
         except Exception as e:
-            log.error(f"{e=}")
-
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            log.error("%s %s %s %s", exc_type, fname, exc_tb.tb_lineno)
+            log.exception("error calling getresource type=%s id=%s", type, id)
             if rr is False:
                 log.error("--->> Could not get resource " + type + " id=" + str(id))
-                pass
 
     with open("processed-resources.log", "a") as f4:
         f4.write(str(type) + " : " + str(id) + "\n")
@@ -2644,9 +2634,7 @@ def call_boto3(type, clfn, descfn, topkey, key, id):
                     + " clfn="
                     + clfn
                 )
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                log.error(f"{e=} [pv1] %s %s", fname, exc_tb.tb_lineno)
+                log.exception(f"ParamValidationError [pv1] type={type} clfn={clfn}")
                 with open("boto3-error.err", "a") as f:
                     f.write(
                         "type="
@@ -2662,7 +2650,6 @@ def call_boto3(type, clfn, descfn, topkey, key, id):
                         + "\n"
                     )
                     f.write(f"{e=} [pv1] \n")
-                    f.write(f"{fname=} {exc_tb.tb_lineno=} [e2] \n")
                     f.write(
                         "-----------------------------------------------------------------------------\n"
                     )
@@ -2702,10 +2689,7 @@ def call_boto3(type, clfn, descfn, topkey, key, id):
                         + " clfn="
                         + clfn
                     )
-                    exc_type, exc_obj, exc_tb = sys.exc_info()
-                    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                    log.error(f"{e=} [pv2] %s %s", fname, exc_tb.tb_lineno)
-
+                    log.exception(f"ParamValidationError [pv2] type={type} clfn={clfn}")
                     with open("boto3-error.err", "a") as f:
                         f.write(
                             "type="
@@ -2721,7 +2705,6 @@ def call_boto3(type, clfn, descfn, topkey, key, id):
                             + "\n"
                         )
                         f.write(f"{e=} [pv2] \n")
-                        f.write(f"{fname=} {exc_tb.tb_lineno=} [e2] \n")
                         f.write(
                             "-----------------------------------------------------------------------------\n"
                         )
@@ -2956,9 +2939,8 @@ def handle_error(e, frame, clfn, descfn, topkey, id):
         + str(id)
     )
     try:
-        log.error(f"{e=} [e1]")
+        log.error(f"{e=} [e1]", exc_info=True)
         log.error(f"{exn=} [e1]")
-        log.error("%s %s", fname, exc_tb.tb_lineno)
     except:
         log.error("except err")
         pass

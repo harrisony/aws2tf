@@ -700,10 +700,7 @@ def fixtf(ttft, tf):
                     # Get the function from the module
                     getfn = getattr(module, ttft)
             except Exception as e:
-                log.error(f"{e=}")
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                log.error("%s %s %s", exc_type, fname, exc_tb.tb_lineno)
+                log.exception("error loading fixtf handler for %s", ttft)
                 log.warning(
                     "** no fixtf2 for " + ttft + " calling generic fixtf2.aws_resource"
                 )
@@ -742,10 +739,7 @@ def fixtf(ttft, tf):
                         skip = 1
 
             except Exception as e:
-                log.error(f"{e=}")
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                log.error("%s %s %s", exc_type, fname, exc_tb.tb_lineno)
+                log.exception("error calling fixtf handler for %s/%s", ttft, callfn)
                 log.error("** error in " + ttft + " " + callfn + " OR .....")
                 log.error("-- no fixtf for type:" + ttft + " callfn:" + callfn)
                 log.error(

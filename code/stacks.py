@@ -66,11 +66,7 @@ def getstack(stack_name, nested, client):
         return
 
     except Exception as e:
-        log.error(f"{e=}")
-        log.error("-1->unexpected error in getstack")
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        log.error("%s %s %s %s", exc_type, fname, exc_tb.tb_lineno)
+        log.exception("unexpected error in getstack")
         return
 
     # Add the stack ID to nested list
@@ -105,11 +101,7 @@ def getstackresources(stack_name, client):
         for page in paginator.paginate(StackName=stack_name):
             response.extend(page["StackResourceSummaries"])
     except Exception as e:
-        log.error(f"{e=}")
-        log.error("-1->unexpected error in getstack")
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        log.error("%s %s %s %s", exc_type, fname, exc_tb.tb_lineno)
+        log.exception("unexpected error in getstackresources")
         log.info("exit 014")
         timed_int.stop()
         exit()

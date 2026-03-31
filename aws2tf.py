@@ -13,46 +13,53 @@ from typing import List, Dict
 import io
 from concurrent.futures import ThreadPoolExecutor
 import logging
+from loguru import logger as _logger
 from tqdm import tqdm
 
 sys.path.insert(0, "./code")
 
 
-# Configure logging
+class _InterceptHandler(logging.Handler):
+    """Route stdlib logging calls through loguru."""
+
+    def emit(self, record: logging.LogRecord) -> None:
+        try:
+            level = _logger.level(record.levelname).name
+        except ValueError:
+            level = record.levelno
+        frame, depth = logging.currentframe(), 2
+        while frame.f_code.co_filename == logging.__file__:
+            frame = frame.f_back
+            depth += 1
+        _logger.opt(depth=depth, exception=record.exc_info).log(
+            level, record.getMessage()
+        )
+
+
 def setup_logging(debug=False, log_file="aws2tf.log"):
-    """Setup logging configuration for aws2tf with console and file output."""
-    level = logging.DEBUG if debug else logging.INFO
-
-    # Create formatter - simple format that matches existing output style
-    formatter = logging.Formatter("%(message)s")
-
-    # Get logger and configure
-    logger = logging.getLogger("aws2tf")
-    logger.setLevel(level)
-    logger.handlers.clear()
-
-    # Console handler
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(formatter)
-    logger.addHandler(console_handler)
-
-    # File handler with secure permissions (Security Fix #7)
-    # Create log file with restricted permissions (0o600 = rw-------)
-    # This prevents other users from reading potentially sensitive log data
-    if os.path.exists(log_file):
-        os.chmod(log_file, 0o600)
-
-    file_handler = logging.FileHandler(log_file, mode="w")
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
-
-    # Set secure permissions on the log file after creation
+    level = "DEBUG" if debug else "INFO"
+    _logger.remove()
+    # Console: message-only, colourised by severity
+    _logger.add(
+        sys.stdout,
+        format="<level>{message}</level>",
+        level=level,
+        colorize=True,
+    )
+    # File: full detail (timestamps, level, location, backtrace) for post-mortem
+    _logger.add(
+        log_file,
+        format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{line} - {message}",
+        level="DEBUG",
+        mode="w",
+        backtrace=True,
+    )
     try:
         os.chmod(log_file, 0o600)
     except Exception:
-        pass  # Ignore if we can't set permissions
-
-    return logger
+        pass
+    logging.basicConfig(handlers=[_InterceptHandler()], level=0, force=True)
+    return logging.getLogger("aws2tf")
 
 
 # Initialize logger (will be reconfigured after args parsing)
