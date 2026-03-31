@@ -6,30 +6,30 @@ notimplemented = {
     # Testing these resources is not recommended
     # ========================================
     #
-	"aws_waf_byte_match_set": True,  ### Deprecated - use WAFv2
-	"aws_waf_geo_match_set": True,  ### Deprecated - use WAFv2
-	"aws_waf_ipset": True,  ### Deprecated - use WAFv2
-	"aws_waf_rate_based_rule": True,  ### Deprecated - use WAFv2
-	"aws_waf_regex_match_set": True,  ### Deprecated - use WAFv2
-	"aws_waf_regex_pattern_set": True,  ### Deprecated - use WAFv2
-	"aws_waf_rule": True,  ### Deprecated - use WAFv2
-	"aws_waf_rule_group": True,  ### Deprecated - use WAFv2
-	"aws_waf_size_constraint_set": True,  ### Deprecated - use WAFv2
-	"aws_waf_sql_injection_match_set": True,  ### Deprecated - use WAFv2
-	"aws_waf_xss_match_set": True,  ### Deprecated - use WAFv2
-	"aws_wafregional_byte_match_set": True,  ### Deprecated - use WAFv2
-	"aws_wafregional_geo_match_set": True,  ### Deprecated - use WAFv2
-	"aws_wafregional_ipset": True,  ### Deprecated - use WAFv2
-	"aws_wafregional_rate_based_rule": True,  ### Deprecated - use WAFv2
-	"aws_wafregional_regex_match_set": True,  ### Deprecated - use WAFv2
-	"aws_wafregional_regex_pattern_set": True,  ### Deprecated - use WAFv2
-	"aws_wafregional_rule": True,  ### Deprecated - use WAFv2
-	"aws_wafregional_rule_group": True,  ### Deprecated - use WAFv2
-	"aws_wafregional_size_constraint_set": True,  ### Deprecated - use WAFv2
-	"aws_wafregional_sql_injection_match_set": True,  ### Deprecated - use WAFv2
-	"aws_wafregional_web_acl": True,  ### Deprecated - use WAFv2
-	"aws_wafregional_web_acl_association": True,  ### Deprecated - use WAFv2
-	"aws_wafregional_xss_match_set": True,  ### Deprecated - use WAFv2
+    "aws_waf_byte_match_set": True,  ### Deprecated - use WAFv2
+    "aws_waf_geo_match_set": True,  ### Deprecated - use WAFv2
+    "aws_waf_ipset": True,  ### Deprecated - use WAFv2
+    "aws_waf_rate_based_rule": True,  ### Deprecated - use WAFv2
+    "aws_waf_regex_match_set": True,  ### Deprecated - use WAFv2
+    "aws_waf_regex_pattern_set": True,  ### Deprecated - use WAFv2
+    "aws_waf_rule": True,  ### Deprecated - use WAFv2
+    "aws_waf_rule_group": True,  ### Deprecated - use WAFv2
+    "aws_waf_size_constraint_set": True,  ### Deprecated - use WAFv2
+    "aws_waf_sql_injection_match_set": True,  ### Deprecated - use WAFv2
+    "aws_waf_xss_match_set": True,  ### Deprecated - use WAFv2
+    "aws_wafregional_byte_match_set": True,  ### Deprecated - use WAFv2
+    "aws_wafregional_geo_match_set": True,  ### Deprecated - use WAFv2
+    "aws_wafregional_ipset": True,  ### Deprecated - use WAFv2
+    "aws_wafregional_rate_based_rule": True,  ### Deprecated - use WAFv2
+    "aws_wafregional_regex_match_set": True,  ### Deprecated - use WAFv2
+    "aws_wafregional_regex_pattern_set": True,  ### Deprecated - use WAFv2
+    "aws_wafregional_rule": True,  ### Deprecated - use WAFv2
+    "aws_wafregional_rule_group": True,  ### Deprecated - use WAFv2
+    "aws_wafregional_size_constraint_set": True,  ### Deprecated - use WAFv2
+    "aws_wafregional_sql_injection_match_set": True,  ### Deprecated - use WAFv2
+    "aws_wafregional_web_acl": True,  ### Deprecated - use WAFv2
+    "aws_wafregional_web_acl_association": True,  ### Deprecated - use WAFv2
+    "aws_wafregional_xss_match_set": True,  ### Deprecated - use WAFv2
     "aws_cloudsearch_domain": True,  ### Legacy - use OpenSearch
     "aws_cloudsearch_domain_service_access_policy": True,  ### Legacy - use OpenSearch
     "aws_datapipeline_pipeline": True,  ### Deprecated - use Glue/Step Functions
@@ -51,32 +51,31 @@ notimplemented = {
     "aws_simpledb_domain": True,  ### Legacy - use DynamoDB
     "aws_wafv2_api_key": True,  ### Deprecated - use WAFv2
     "aws_wafv2_web_acl_rule_group_association": True,  ### Deprecated - use WAFv2
-    "aws_worklink_fleet": True, ### Service discontinued (Dec 2021)
+    "aws_worklink_fleet": True,  ### Service discontinued (Dec 2021)
     #
     # ========================================
     # ACTIVE SERVICES
     # ========================================
     #
-    "aws_network_acl_rule": True, ### ? worth doing
+    "aws_network_acl_rule": True,  ### ? worth doing
     "aws_auditmanager_account_registration": True,  ### TODO
-    "aws_cognito_user_pool_domain": True,  ### TODO  
+    "aws_cognito_user_pool_domain": True,  ### TODO
     "aws_datasync_location_s3": True,  ### TODO
     "aws_dax_cluster": True,  ### TODO
-
     "aws_iot_thing_group": True,  ### TODO
-    #"aws_lightsail_database": True,  ### TODO
+    # "aws_lightsail_database": True,  ### TODO
     "aws_macie2_classification_job": True,  ### TODO
     "aws_mskconnect_connector": True,  ### TODO
-    "aws_networkfirewall_resource_policy": True, ### TODO
+    "aws_networkfirewall_resource_policy": True,  ### TODO
     "aws_opensearch_inbound_connection_accepter": True,  ### TODO
     "aws_redshiftserverless_resource_policy": True,  ### Requires snapshot (which requires namespace/workgroup) - complex and expensive
-    "aws_s3_directory_bucket": True, ### S3 Express One Zone - requires account-level enablement, InvalidBucketName error in testing
+    "aws_s3_directory_bucket": True,  ### S3 Express One Zone - requires account-level enablement, InvalidBucketName error in testing
     "aws_sagemaker_feature_group": True,  ### TODO
     "aws_securitylake_data_lake": True,  ### TODO
-    "aws_auditmanager_assessment": True,   ### TODO
-    "aws_ce_cost_allocation_tag": True, ### TODO
-    "aws_ce_cost_allocation_tag": True, ### TODO
-    "aws_cloudformation_stack": True, #### ? not handled well in Terraform 
+    "aws_auditmanager_assessment": True,  ### TODO
+    "aws_ce_cost_allocation_tag": True,  ### TODO
+    "aws_ce_cost_allocation_tag": True,  ### TODO
+    "aws_cloudformation_stack": True,  #### ? not handled well in Terraform
     #
     # Many of these need to be done.
     #
@@ -117,19 +116,18 @@ notimplemented = {
     #
     "aws_codeartifact_domain_permissions_policy": True,
     "aws_codeartifact_repository_permissions_policy": True,
-    #"aws_codebuild_report_group": True,  ### Testing in progress
-    #"aws_codebuild_resource_policy": True,  ### Testing in progress
-    #"aws_codebuild_webhook": True,  ### AWS API does not provide list or get methods for webhooks
+    # "aws_codebuild_report_group": True,  ### Testing in progress
+    # "aws_codebuild_resource_policy": True,  ### Testing in progress
+    # "aws_codebuild_webhook": True,  ### AWS API does not provide list or get methods for webhooks
     "aws_codecommit_approval_rule_template_association": True,
-    #"aws_codedeploy_app": True,  ### Testing in progress
-    #"aws_codedeploy_deployment_config": True,  ### Testing in progress
+    # "aws_codedeploy_app": True,  ### Testing in progress
+    # "aws_codedeploy_deployment_config": True,  ### Testing in progress
     #
-    #"aws_codepipeline_custom_action_type": True,  ### Testing in progress
-    #"aws_codepipeline_webhook": True,  ### Testing in progress
+    # "aws_codepipeline_custom_action_type": True,  ### Testing in progress
+    # "aws_codepipeline_webhook": True,  ### Testing in progress
     #
     "aws_cognito_identity_pool_provider_principal_tag": True,
     "aws_cognito_risk_configuration": True,
-
     "aws_cognito_user_pool_ui_customization": True,
     #
     "aws_comprehend_document_classifier": True,
@@ -154,7 +152,6 @@ notimplemented = {
     "aws_datasync_location_nfs": True,
     "aws_datasync_location_object_storage": True,
     "aws_datasync_location_smb": True,
-
     "aws_dax_parameter_group": True,
     "aws_dax_subnet_group": True,
     #
@@ -165,11 +162,11 @@ notimplemented = {
     "aws_detective_organization_configuration": True,
     #
     "aws_devicefarm_device_pool": True,
-	"aws_devicefarm_instance_profile": True,
-	"aws_devicefarm_network_profile": True,
-	"aws_devicefarm_project": True,
-	"aws_devicefarm_test_grid_project": True,
-	"aws_devicefarm_upload": True,
+    "aws_devicefarm_instance_profile": True,
+    "aws_devicefarm_network_profile": True,
+    "aws_devicefarm_project": True,
+    "aws_devicefarm_test_grid_project": True,
+    "aws_devicefarm_upload": True,
     #
     "aws_directory_service_conditional_forwarder": True,
     "aws_directory_service_radius_settings": True,
@@ -181,7 +178,7 @@ notimplemented = {
     "aws_dms_s3_endpoint": True,
     "aws_docdbelastic_cluster": True,
     #
-    #"aws_dx_gateway": True,  ### PASSED - tested successfully
+    # "aws_dx_gateway": True,  ### PASSED - tested successfully
     "aws_dx_gateway_association": True,  ### Requires physical Direct Connect connection
     "aws_dx_gateway_association_proposal": True,  ### Requires physical Direct Connect connection
     "aws_dx_hosted_private_virtual_interface": True,  ### Requires physical Direct Connect connection
@@ -235,7 +232,6 @@ notimplemented = {
     "aws_iot_provisioning_template": True,
     "aws_iot_role_alias": True,
     #
-
     "aws_iot_thing_group_membership": True,
     "aws_iot_thing_type": True,
     "aws_iot_topic_rule_destination": True,
@@ -259,16 +255,16 @@ notimplemented = {
     "aws_licensemanager_grant_accepter": True,
     #
     "aws_lightsail_bucket_resource_access": True,
-    #"aws_lightsail_disk": True,
+    # "aws_lightsail_disk": True,
     "aws_lightsail_disk_attachment": True,
     "aws_lightsail_domain_entry": True,
-    #"aws_lightsail_instance": True,
-    #"aws_lightsail_lb": True,
+    # "aws_lightsail_instance": True,
+    # "aws_lightsail_lb": True,
     "aws_lightsail_lb_attachment": True,
     "aws_lightsail_lb_certificate": True,
     "aws_lightsail_lb_certificate_attachment": True,
-    #"aws_lightsail_lb_https_redirection_policy": True,
-    #"aws_lightsail_lb_stickiness_policy": True,
+    # "aws_lightsail_lb_https_redirection_policy": True,
+    # "aws_lightsail_lb_stickiness_policy": True,
     #
     "aws_location_geofence_collection": True,
     "aws_location_map": True,
@@ -335,7 +331,6 @@ notimplemented = {
     "aws_rbin_rule": True,
     #
     "aws_resourceexplorer2_index": True,
-
     "aws_rolesanywhere_profile": True,
     "aws_rolesanywhere_trust_anchor": True,
     #
@@ -378,15 +373,15 @@ notimplemented = {
     "aws_ses_receipt_filter": True,
     "aws_ses_template": True,
     #
-    #"aws_sesv2_account_vdm_attributes": True,
-    #"aws_sesv2_configuration_set": True,
-    #"aws_sesv2_configuration_set_event_destination": True,
-    #"aws_sesv2_contact_list": True,
+    # "aws_sesv2_account_vdm_attributes": True,
+    # "aws_sesv2_configuration_set": True,
+    # "aws_sesv2_configuration_set_event_destination": True,
+    # "aws_sesv2_contact_list": True,
     "aws_sesv2_dedicated_ip_assignment": True,
-    #"aws_sesv2_dedicated_ip_pool": True,
-    #"aws_sesv2_email_identity": True,
-    #"aws_sesv2_email_identity_feedback_attributes": True,
-    #"aws_sesv2_email_identity_mail_from_attributes": True,
+    # "aws_sesv2_dedicated_ip_pool": True,
+    # "aws_sesv2_email_identity": True,
+    # "aws_sesv2_email_identity_feedback_attributes": True,
+    # "aws_sesv2_email_identity_mail_from_attributes": True,
     #
     "aws_shield_protection": True,
     "aws_shield_protection_health_check_association": True,
@@ -409,24 +404,23 @@ notimplemented = {
     #
     "aws_transfer_ssh_key": True,
     "aws_transfer_tag": True,
-# apigateway stuff
-	"aws_api_gateway_domain_name": True,  ### Requires ACM certificate and domain ownership
-	"aws_api_gateway_integration": True,  ### Composite ID: REST-API-ID/RESOURCE-ID/HTTP-METHOD
-	"aws_api_gateway_integration_response": True,  ### Composite ID: REST-API-ID/RESOURCE-ID/HTTP-METHOD/STATUS-CODE
-	"aws_api_gateway_method_response": True,  ### Composite ID: REST-API-ID/RESOURCE-ID/HTTP-METHOD/STATUS-CODE
-### old WAF
+    # apigateway stuff
+    "aws_api_gateway_domain_name": True,  ### Requires ACM certificate and domain ownership
+    "aws_api_gateway_integration": True,  ### Composite ID: REST-API-ID/RESOURCE-ID/HTTP-METHOD
+    "aws_api_gateway_integration_response": True,  ### Composite ID: REST-API-ID/RESOURCE-ID/HTTP-METHOD/STATUS-CODE
+    "aws_api_gateway_method_response": True,  ### Composite ID: REST-API-ID/RESOURCE-ID/HTTP-METHOD/STATUS-CODE
+    ### old WAF
     #
     "aws_auditmanager_account_registration": True,
-	"aws_auditmanager_assessment_delegation": True,
-	"aws_auditmanager_assessment_report": True,
-	"aws_auditmanager_control": True,
-	"aws_auditmanager_framework": True,
-	"aws_auditmanager_framework_share": True,
-	"aws_auditmanager_organization_admin_account_registration": True,
+    "aws_auditmanager_assessment_delegation": True,
+    "aws_auditmanager_assessment_report": True,
+    "aws_auditmanager_control": True,
+    "aws_auditmanager_framework": True,
+    "aws_auditmanager_framework_share": True,
+    "aws_auditmanager_organization_admin_account_registration": True,
     #
-
-    "aws_timestreamwrite_database": True, ### region
-    "aws_timestreamwrite_table": True, ### region
+    "aws_timestreamwrite_database": True,  ### region
+    "aws_timestreamwrite_table": True,  ### region
     #
     # New resources added from aws_dict_extended.py
     #
@@ -445,7 +439,6 @@ notimplemented = {
     "aws_dynamodb_table_export": True,  ### TODO 6.27.0
     "aws_ec2_transit_gateway_default_route_table_association": True,  ### Cannot import - no import section in Terraform docs
     "aws_ec2_transit_gateway_default_route_table_propagation": True,  ### Cannot import - no import section in Terraform docs
-
     "aws_eks_capability": True,  ### TODO 6.27.0
     "aws_fis_target_account_configuration": True,  ### TODO 6.27.0
     "aws_fsx_s3_access_point_attachment": True,  ### TODO 6.27.0
@@ -525,8 +518,8 @@ notimplemented = {
     "aws_servicecatalogappregistry_application": True,  ### TODO 6.27.0
     "aws_servicecatalogappregistry_attribute_group": True,  ### TODO 6.27.0
     "aws_servicecatalogappregistry_attribute_group_association": True,  ### TODO 6.27.0
-    #"aws_sesv2_account_suppression_attributes": True,  ### TODO 6.27.0
-    #"aws_sesv2_email_identity_policy": True,  ### TODO 6.27.0
+    # "aws_sesv2_account_suppression_attributes": True,  ### TODO 6.27.0
+    # "aws_sesv2_email_identity_policy": True,  ### TODO 6.27.0
     "aws_sesv2_tenant": True,  ### TODO 6.27.0 - Terraform provider issue: "provider does not support resource type" during import
     "aws_shield_proactive_engagement": True,  ### TODO 6.27.0
     "aws_shield_subscription": True,  ### TODO 6.27.0

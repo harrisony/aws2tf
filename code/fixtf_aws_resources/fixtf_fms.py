@@ -12,25 +12,26 @@ Reduction: 0% less code
 import logging
 from .base_handler import BaseResourceHandler
 
-log = logging.getLogger('aws2tf')
+log = logging.getLogger("aws2tf")
 
 
 # ============================================================================
 # Magic method for backward compatibility with getattr()
 # ============================================================================
 
+
 def __getattr__(name):
-	"""
-	Dynamically provide default handler for resources without custom logic.
-	
-	This allows getattr(module, "aws_resource") to work even if the
-	function doesn't exist, by returning the default handler.
-	
-	All FMS resources automatically use this.
-	"""
-	if name.startswith("aws_"):
-		return BaseResourceHandler.default_handler
-	raise AttributeError(f"module 'fixtf_fms' has no attribute '{name}'")
+    """
+    Dynamically provide default handler for resources without custom logic.
+
+    This allows getattr(module, "aws_resource") to work even if the
+    function doesn't exist, by returning the default handler.
+
+    All FMS resources automatically use this.
+    """
+    if name.startswith("aws_"):
+        return BaseResourceHandler.default_handler
+    raise AttributeError(f"module 'fixtf_fms' has no attribute '{name}'")
 
 
 log.debug(f"FMS handlers: __getattr__ for all 0 resources")

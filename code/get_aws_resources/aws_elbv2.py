@@ -1,153 +1,230 @@
 import common
 import logging
-log = logging.getLogger('aws2tf')
+
+log = logging.getLogger("aws2tf")
 import context
 import boto3
 import botocore
 import inspect
 
-def get_aws_lb(type,id,clfn,descfn,topkey,key,filterid):
+
+def get_aws_lb(type, id, clfn, descfn, topkey, key, filterid):
 
     if context.debug:
-        log.debug("--> get_aws_lb  doing " + type + ' with id ' + str(id) +
-              " clfn="+clfn+" descfn="+descfn+" topkey="+topkey+" key="+key+" filterid="+filterid)
-        
+        log.debug(
+            "--> get_aws_lb  doing "
+            + type
+            + " with id "
+            + str(id)
+            + " clfn="
+            + clfn
+            + " descfn="
+            + descfn
+            + " topkey="
+            + topkey
+            + " key="
+            + key
+            + " filterid="
+            + filterid
+        )
+
     try:
         client = boto3.client(clfn)
         response = []
         if id is None:
-            response = client.describe_load_balancers() 
+            response = client.describe_load_balancers()
         elif "arn:" in id:
             response = client.describe_load_balancers(LoadBalancerArns=[id])
         else:
             response = client.describe_load_balancers(Names=[id])
-        
-        response=response[topkey]
-        if response == []: log.debug("Empty response for "+type+ " id="+str(id)+" returning"); return True
-        
-        for j in response: 
-            retid=j[key] # key is LoadBalancerArn
-            common.write_import(type,retid,None) 
-            common.add_dependancy("aws_lb_listener",retid)
+
+        response = response[topkey]
+        if response == []:
+            log.debug("Empty response for " + type + " id=" + str(id) + " returning")
+            return True
+
+        for j in response:
+            retid = j[key]  # key is LoadBalancerArn
+            common.write_import(type, retid, None)
+            common.add_dependancy("aws_lb_listener", retid)
 
     except Exception as e:
-        common.handle_error(e,str(inspect.currentframe().f_code.co_name),clfn,descfn,topkey,id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
 
     return True
 
 
-def get_aws_lb_listener(type,id,clfn,descfn,topkey,key,filterid):
+def get_aws_lb_listener(type, id, clfn, descfn, topkey, key, filterid):
 
     if context.debug:
-        log.debug("--> get_aws_lb_listener  doing " + type + ' with id ' + str(id) +
-              " clfn="+clfn+" descfn="+descfn+" topkey="+topkey+" key="+key+" filterid="+filterid)
-        
+        log.debug(
+            "--> get_aws_lb_listener  doing "
+            + type
+            + " with id "
+            + str(id)
+            + " clfn="
+            + clfn
+            + " descfn="
+            + descfn
+            + " topkey="
+            + topkey
+            + " key="
+            + key
+            + " filterid="
+            + filterid
+        )
+
     try:
         client = boto3.client(clfn)
         response = []
         if id is None:
-            response = client.describe_listeners() 
+            response = client.describe_listeners()
         elif ":listener/" in id and id is not None:
-                response = client.describe_listeners(ListenerArns=[id])
+            response = client.describe_listeners(ListenerArns=[id])
         elif ":loadbalancer/" in id and id is not None:
-                response = client.describe_listeners(LoadBalancerArn=id)
+            response = client.describe_listeners(LoadBalancerArn=id)
         else:
-            log.info("Invalid id format for "+type+" id="+str(id)+" - returning")
+            log.info(
+                "Invalid id format for " + type + " id=" + str(id) + " - returning"
+            )
             return True
-   
-        response=response[topkey]
-        if response == []: 
-            log.debug("Empty response for "+type+ " id="+str(id)+" returning")
-            pkey="aws_lb_listener."+id
-            context.rproc[pkey]=True
-            return True
-        
-        for j in response: 
-            retid=j[key] # ListenerARN
-            common.write_import(type,retid,None) 
-            common.add_dependancy("aws_lb_listener_rule",retid)
-            pkey="aws_lb_listener."+id
-            context.rproc[pkey]=True
 
+        response = response[topkey]
+        if response == []:
+            log.debug("Empty response for " + type + " id=" + str(id) + " returning")
+            pkey = "aws_lb_listener." + id
+            context.rproc[pkey] = True
+            return True
+
+        for j in response:
+            retid = j[key]  # ListenerARN
+            common.write_import(type, retid, None)
+            common.add_dependancy("aws_lb_listener_rule", retid)
+            pkey = "aws_lb_listener." + id
+            context.rproc[pkey] = True
 
     except Exception as e:
-        common.handle_error(e,str(inspect.currentframe().f_code.co_name),clfn,descfn,topkey,id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
 
     return True
 
-def get_aws_lb_listener_rule(type,id,clfn,descfn,topkey,key,filterid):
+
+def get_aws_lb_listener_rule(type, id, clfn, descfn, topkey, key, filterid):
 
     if context.debug:
-        log.debug("--> get_aws_lb_listener_rule  doing " + type + ' with id ' + str(id) +
-              " clfn="+clfn+" descfn="+descfn+" topkey="+topkey+" key="+key+" filterid="+filterid)
-        
+        log.debug(
+            "--> get_aws_lb_listener_rule  doing "
+            + type
+            + " with id "
+            + str(id)
+            + " clfn="
+            + clfn
+            + " descfn="
+            + descfn
+            + " topkey="
+            + topkey
+            + " key="
+            + key
+            + " filterid="
+            + filterid
+        )
+
     try:
         client = boto3.client(clfn)
         response = []
         if id is None:
-            response = client.describe_rules() 
+            response = client.describe_rules()
         elif ":listener-rule/" in id:
             response = client.describe_rules(RuleArns=[id])
         elif ":listener/" in id:
             response = client.describe_rules(ListenerArn=id)
         else:
-            log.info("Invalid id format for "+type+" id="+str(id)+" - returning")
+            log.info(
+                "Invalid id format for " + type + " id=" + str(id) + " - returning"
+            )
             return True
 
-        response=response[topkey]
-        
-        if response == []: log.debug("Empty response for "+type+ " id="+str(id)+" returning"); return True
-        
-        for j in response: 
-            
-            retid=j[key] # key is RuleArn
+        response = response[topkey]
+
+        if response == []:
+            log.debug("Empty response for " + type + " id=" + str(id) + " returning")
+            return True
+
+        for j in response:
+            retid = j[key]  # key is RuleArn
 
             # is it default ?
-            isdef=j['IsDefault']
-            if isdef==False:
-                common.write_import(type,retid,None) 
-            pkey="aws_lb_listener_rule."+id
+            isdef = j["IsDefault"]
+            if isdef == False:
+                common.write_import(type, retid, None)
+            pkey = "aws_lb_listener_rule." + id
 
-            context.rproc[pkey]=True
+            context.rproc[pkey] = True
 
     except Exception as e:
-        common.handle_error(e,str(inspect.currentframe().f_code.co_name),clfn,descfn,topkey,id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
 
     return True
 
-def get_aws_lb_target_group(type,id,clfn,descfn,topkey,key,filterid):
+
+def get_aws_lb_target_group(type, id, clfn, descfn, topkey, key, filterid):
 
     if context.debug:
-        log.debug("--> get_aws_lb_target_group  doing " + type + ' with id ' + str(id) +
-              " clfn="+clfn+" descfn="+descfn+" topkey="+topkey+" key="+key+" filterid="+filterid)
-        
+        log.debug(
+            "--> get_aws_lb_target_group  doing "
+            + type
+            + " with id "
+            + str(id)
+            + " clfn="
+            + clfn
+            + " descfn="
+            + descfn
+            + " topkey="
+            + topkey
+            + " key="
+            + key
+            + " filterid="
+            + filterid
+        )
+
     try:
         client = boto3.client(clfn)
         response = []
         if id is None:
-            response = client.describe_target_groups() 
+            response = client.describe_target_groups()
         elif ":targetgroup/" in id and id is not None:
-                response = client.describe_target_groups(TargetGroupArns=[id])
+            response = client.describe_target_groups(TargetGroupArns=[id])
         elif ":loadbalancer/" in id and id is not None:
-                response = client.describe_target_groups(LoadBalancerArn=id)
+            response = client.describe_target_groups(LoadBalancerArn=id)
         else:
-            log.info("Invalid id format for "+type+" id="+str(id)+" - returning")
+            log.info(
+                "Invalid id format for " + type + " id=" + str(id) + " - returning"
+            )
             return True
-   
-        response=response[topkey]
-        if response == []: log.debug("Empty response for "+type+ " id="+str(id)+" returning"); return True
-        
-        for j in response: 
-            retid=j[key] # TargetGroupArn
-            common.write_import(type,retid,None) 
-            pkey=type+"."+retid
-            context.rproc[pkey]=True
-            #common.add_dependancy("aws_lb_listener_rule",retid)
-            #pkey="aws_lb_listener."+id
-            #context.rproc[pkey]=True
 
+        response = response[topkey]
+        if response == []:
+            log.debug("Empty response for " + type + " id=" + str(id) + " returning")
+            return True
+
+        for j in response:
+            retid = j[key]  # TargetGroupArn
+            common.write_import(type, retid, None)
+            pkey = type + "." + retid
+            context.rproc[pkey] = True
+            # common.add_dependancy("aws_lb_listener_rule",retid)
+            # pkey="aws_lb_listener."+id
+            # context.rproc[pkey]=True
 
     except Exception as e:
-        common.handle_error(e,str(inspect.currentframe().f_code.co_name),clfn,descfn,topkey,id)
+        common.handle_error(
+            e, str(inspect.currentframe().f_code.co_name), clfn, descfn, topkey, id
+        )
 
     return True
