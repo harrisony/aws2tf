@@ -672,6 +672,14 @@ def fixtf(ttft, tf):
     ###Generic block remover
     ########################
 
+    # Resolve handler once — registry takes priority over FIXTF_MODULES
+    import resource_registry as _rr
+    _registry_handler = _rr.get_handler(ttft)
+    _use_registry_transform = (
+        _registry_handler is not None
+        and type(_registry_handler) is not _rr.DefaultResourceHandler
+    )
+
     with open(tf2, "w") as f2:
         skip = 0
         flag1 = False
@@ -723,7 +731,10 @@ def fixtf(ttft, tf):
 
                 # call fixtf_aws_rsource if skip=0
                 if skip == 0:
-                    skip, t1, flag1, flag2 = getfn(t1, tt1, tt2, flag1, flag2)
+                    if _use_registry_transform:
+                        skip, t1, flag1, flag2 = _registry_handler.transform(t1, tt1, tt2, flag1, flag2)
+                    else:
+                        skip, t1, flag1, flag2 = getfn(t1, tt1, tt2, flag1, flag2)
 
                 #####
                 ## block strip sections -

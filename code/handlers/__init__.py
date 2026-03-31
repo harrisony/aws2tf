@@ -10,8 +10,4 @@ Modules are imported here so that registrations happen at startup when this
 package is imported.
 """
 
-# Custom handler modules will be imported here as they are created.
-# Example (uncomment as each service is migrated):
-# from handlers import lambda_  # noqa: F401
-# from handlers import s3       # noqa: F401
-# from handlers import ec2      # noqa: F401
+from handlers import lambda_  # noqa: F401

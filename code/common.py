@@ -905,7 +905,18 @@ def call_resource(type, id):
         log.info("exit 016")
         stop_timer()
         exit()
-    # Try specific
+    # Try specific — check new registry first, fall back to old module lookup
+
+    try:
+        import resource_registry
+        _handler = resource_registry.get_handler(type)
+        if _handler is not None and type(_handler) is not resource_registry.DefaultResourceHandler:
+            log.debug("registry dispatch: %s id=%s", type, id)
+            sr = _handler.discover(id)
+            return
+
+    except Exception as e:
+        log.debug("registry dispatch failed for %s: %s", type, e)
 
     try:
         if context.debug:
