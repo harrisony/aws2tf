@@ -763,11 +763,11 @@ def fixtf(ttft, tf):
                 f2.write(t1)
 
         # extra block removals in aws_lb
-        if type == "aws_lb":
+        if ttft == "aws_lb":
             if context.lbskipaacl:
                 shutil.move(tf2, tf2 + ".saved")
                 context.stripblock = "access_logs"
-                with open(tf2 + ".saved", "e") as f1:
+                with open(tf2 + ".saved", "r") as f1:
                     Lines = f1.readlines()
                 with open(tf2, "w") as f2:
                     for t1 in Lines:
@@ -787,7 +787,7 @@ def fixtf(ttft, tf):
             if context.lbskipcnxl:
                 shutil.move(tf2, tf2 + ".saved")
                 context.stripblock = "connection_logs"
-                with open(tf2 + ".saved", "e") as f1:
+                with open(tf2 + ".saved", "r") as f1:
                     Lines = f1.readlines()
                 with open(tf2, "w") as f2:
                     for t1 in Lines:
