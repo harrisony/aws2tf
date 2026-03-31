@@ -15,10 +15,12 @@ This replaces the split between:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import Generic, TypeVar
+
+ClientT = TypeVar("ClientT")
 
 
 class AWSResourceHandler(ABC):
-
     @property
     @abstractmethod
     def terraform_type(self) -> str:
@@ -83,3 +85,109 @@ class AWSResourceHandler(ABC):
         Replaces: the cascade of `if ttft == "..."` prescan blocks in fixtf.py.
         """
         pass
+
+
+class DefaultResourceHandler(AWSResourceHandler):
+    """
+    Generic handler for resources that need no custom discovery or transform logic.
+
+    - discover() delegates to common.getresource() using the aws_dict metadata.
+    - transform() is a pass-through: includes every line unchanged.
+
+    Used for 86% of resources that have default behavior.
+    """
+
+    def __init__(
+        self,
+        tf_type: str,
+        clfn: str,
+        descfn: str,
+        topkey: str,
+        key: str,
+        filterid: str,
+    ) -> None:
+        self._tf_type = tf_type
+        self._metadata = (clfn, descfn, topkey, key, filterid)
+
+    @property
+    def terraform_type(self) -> str:
+        return self._tf_type
+
+    def discover(self, resource_id: str | None) -> bool:
+        """Delegate to the existing generic getresource() in common.py."""
+        import common
+
+        result = common.getresource(
+            self._tf_type,
+            resource_id,
+            *self._metadata,
+        )
+        return bool(result)
+
+    def transform(
+        self,
+        line: str,
+        attr_name: str,
+        attr_value: str,
+        flag1: bool,
+        flag2: str,
+    ) -> tuple[int, str, bool, str]:
+        """Pass every attribute through unchanged."""
+        return 0, line, flag1, flag2
+
+
+class BotoHandler(AWSResourceHandler, Generic[ClientT]):
+    """
+    Base handler for custom AWS resource handlers that need typed boto3 client access.
+
+    Provides:
+    - self.client property → fully typed ClientT boto3 client
+    - self.client_in(**kwargs) → same, with optional overrides
+
+    Custom handlers inherit like:
+        class LambdaHandler(BotoHandler[LambdaClient]):
+            def discover(self, resource_id):
+                functions = self.client.list_functions()
+                ...
+
+    discover() and transform() have pass-through defaults; override as needed.
+    """
+
+    def __init__(self, tf_type: str, client_factory: type[ClientT]) -> None:
+        self._tf_type = tf_type
+        self._client_factory = client_factory
+        self._client: ClientT | None = None
+
+    @property
+    def terraform_type(self) -> str:
+        return self._tf_type
+
+    @property
+    def client(self) -> ClientT:
+        """Get the typed boto3 client for this resource type."""
+        if self._client is None:
+            import common
+
+            self._client = common.boto3.client(self._client_factory.__name__.lower())
+        return self._client
+
+    def client_in(self, **kwargs) -> ClientT:
+        """Get the typed boto3 client with optional overrides."""
+        import common
+
+        return common.boto3.client(self._client_factory.__name__.lower(), **kwargs)
+
+    def discover(self, resource_id: str | None) -> bool:
+        """Default no-op discovery; override in subclasses."""
+        return False
+
+    def transform(
+        self,
+        line: str,
+        attr_name: str,
+        attr_value: str,
+        flag1: bool,
+        flag2: str,
+    ) -> tuple[int, str, bool, str]:
+        """Pass every attribute through unchanged; override in subclasses."""
+        return 0, line, flag1, flag2

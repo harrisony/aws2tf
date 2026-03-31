@@ -21,13 +21,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 # Lint
 ruff check .
-
-# Tests
-pip install -r requirements-test.txt
-pytest                       # All 267 tests
-pytest tests/unit/           # Unit tests only
-pytest tests/integration/    # Integration tests only
-pytest --cov=code --cov=aws2tf --cov-report=html  # With coverage
 ```
 
 ## Architecture
