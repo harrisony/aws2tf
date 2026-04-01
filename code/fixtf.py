@@ -9,6 +9,7 @@ import shutil
 import inspect
 import logging
 from timed_interrupt import timed_int
+from arn import Arn, InvalidArnException
 
 log = logging.getLogger("aws2tf")
 
@@ -1104,10 +1105,27 @@ def deref_role_arn(t1, tt1, tt2):
         t1 = tt1 + " = aws_lb." + tarn + ".arn\n"
         common.add_dependancy("aws_lb", tt2)
     elif tt2.startswith("arn:aws:wafv2") and ":regional/webacl" in tt2:
-        tarn = tt2.split("/webacl/")[-1]
-        wn = tarn.split("/")[0]
-        wi = tarn.split("/")[-1]
-        tarn2 = "w-" + wi + "_" + wn + "_REGIONAL"
+        try:
+            parsed = Arn(tt2)
+            rest = parsed.rest
+            rest_parts = rest.split("/webacl/")
+            if len(rest_parts) > 1:
+                tarn = rest_parts[1]
+                wn = tarn.split("/")[0]
+                wi = tarn.split("/")[-1]
+                tarn2 = "w-" + wi + "_" + wn + "_REGIONAL"
+            else:
+                tarn = tt2.split("/webacl/")[-1]
+                wn = tarn.split("/")[0]
+                wi = tarn.split("/")[-1]
+                tarn2 = "w-" + wi + "_" + wn + "_REGIONAL"
+        except InvalidArnException:
+            if context.debug:
+                log.debug(f"Invalid ARN format: {tt2}, using fallback split method")
+            tarn = tt2.split("/webacl/")[-1]
+            wn = tarn.split("/")[0]
+            wi = tarn.split("/")[-1]
+            tarn2 = "w-" + wi + "_" + wn + "_REGIONAL"
         t1 = tt1 + " = aws_wafv2_web_acl." + tarn2 + ".arn\n"
 
     elif (
@@ -1313,8 +1331,14 @@ def generic_deref_arn(t1, tt1, tt2):
     return t1
     if cc == 0:
         tarn = tt2
-        arn_list = tarn.split(":")[0:3]
-        arn_fragment = ":".join(arn_list)
+        try:
+            parsed = Arn(tarn)
+            arn_fragment = f"{parsed.partition}:{parsed.service}:{parsed.region}"
+        except InvalidArnException:
+            if context.debug:
+                log.debug(f"Invalid ARN format: {tarn}, using fallback split method")
+            arn_list = tarn.split(":")[0:3]
+            arn_fragment = ":".join(arn_list)
 
         if arn_fragment in arn_dict:
             subtype = arn_dict[arn_fragment]["subtype"]
@@ -1330,8 +1354,16 @@ def generic_deref_arn(t1, tt1, tt2):
         for i in range(cc + 1):
             subn = tt2.split(",")[i]
             tarn = subn
-            arn_list = tarn.split(":")[0:3]
-            arn_fragment = ":".join(arn_list)
+            try:
+                parsed = Arn(tarn)
+                arn_fragment = f"{parsed.partition}:{parsed.service}:{parsed.region}"
+            except InvalidArnException:
+                if context.debug:
+                    log.debug(
+                        f"Invalid ARN format: {tarn}, using fallback split method"
+                    )
+                arn_list = tarn.split(":")[0:3]
+                arn_fragment = ":".join(arn_list)
 
             if arn_fragment in arn_dict:
                 subtype = arn_dict[arn_fragment]["subtype"]

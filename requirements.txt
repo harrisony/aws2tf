@@ -2,3 +2,4 @@ boto3>=1.42.16
 loguru>=0.7.3
 requests>=2.32.5
 tqdm>=4.66.0
+arn>=0.1.5

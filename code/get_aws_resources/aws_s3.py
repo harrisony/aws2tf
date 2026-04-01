@@ -15,6 +15,8 @@ import io
 from concurrent.futures import ThreadPoolExecutor
 from botocore.exceptions import NoCredentialsError, ClientError
 from tqdm import tqdm
+from arn.s3 import BucketArn
+from arn import InvalidArnException
 
 
 def extract_bucket_name_from_arn(id_or_arn):
@@ -32,21 +34,19 @@ def extract_bucket_name_from_arn(id_or_arn):
 
     # If it's an ARN, extract the bucket name
     if id_or_arn.startswith("arn:"):
-        # S3 ARN format: arn:aws:s3:::bucket-name or arn:aws:s3:::bucket-name/*
-        parts = id_or_arn.split(":")
-        if len(parts) >= 6:
-            # The bucket name is after the 5th colon
-            bucket_part = parts[5]
-            # Remove any path components (e.g., bucket-name/path -> bucket-name)
-            bucket_name = bucket_part.split("/")[0]
+        try:
+            parsed = BucketArn(id_or_arn)
+            bucket_name = parsed.name
             if context.debug:
                 log.debug(
                     f"Extracted bucket name '{bucket_name}' from ARN '{id_or_arn}'"
                 )
             return bucket_name
-        else:
+        except InvalidArnException:
             if context.debug:
-                log.debug(f"Invalid S3 ARN format: {id_or_arn}, using as-is")
+                log.debug(
+                    f"Invalid S3 ARN format: {id_or_arn}, using fallback split method"
+                )
             return id_or_arn
 
     # Not an ARN, return as-is (it's already a bucket name)
@@ -348,7 +348,15 @@ def get_s3(s3_fields, type, bucket_name):
                         "Bucket"
                     ]
                 )
-                repbuck = barn.split(":")[-1]
+                try:
+                    parsed = BucketArn(barn)
+                    repbuck = parsed.name
+                except InvalidArnException:
+                    if context.debug:
+                        log.debug(
+                            f"Invalid S3 ARN format: {barn}, using fallback split method"
+                        )
+                    repbuck = barn
                 common.add_known_dependancy("aws_s3_bucket", repbuck)
             except:
                 response = response

@@ -9,6 +9,7 @@ import sys
 import os
 import context
 import inspect
+from arn import Arn, InvalidArnException
 
 
 def get_aws_secretsmanager_secret(type, id, clfn, descfn, topkey, key, filterid):
@@ -45,7 +46,15 @@ def get_aws_secretsmanager_secret(type, id, clfn, descfn, topkey, key, filterid)
                 return True
             for j in response:
                 sarn = j[key]
-                sn = sarn.split(":")[-1]
+                try:
+                    parsed = Arn(sarn)
+                    sn = parsed.rest
+                except InvalidArnException:
+                    if context.debug:
+                        log.debug(
+                            f"Invalid ARN format: {sarn}, using fallback split method"
+                        )
+                    sn = sarn
                 if sn.startswith("rds!"):
                     log.debug("INFO: skipping rds managed secret " + sn + " ...")
                     return True

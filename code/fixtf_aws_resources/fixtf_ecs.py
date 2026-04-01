@@ -14,6 +14,7 @@ import fixtf
 import common
 import context
 from .base_handler import BaseResourceHandler
+from arn import Arn, InvalidArnException
 
 log = logging.getLogger("aws2tf")
 
@@ -57,7 +58,15 @@ def aws_ecs_service(t1, tt1, tt2, flag1, flag2):
 
     if tt1 == "cluster":
         if "arn:" in tt2:
-            tt2 = tt2.split("/")[-1]
+            try:
+                from arn.ecs import ClusterArn
+
+                parsed = ClusterArn(tt2)
+                tt2 = parsed.name
+            except (InvalidArnException, ImportError):
+                if context.debug:
+                    log.debug(f"Invalid ARN format: {tt2}, using fallback split method")
+                tt2 = tt2.split("/")[-1]
 
         if tt2 != "null":
             t1 = tt1 + " = aws_ecs_cluster." + tt2 + ".id\n"
@@ -66,7 +75,15 @@ def aws_ecs_service(t1, tt1, tt2, flag1, flag2):
             skip = 1
     elif tt1 == "task_definition":
         if "arn:" in tt2:
-            tt2 = tt2.split("/")[-1]
+            try:
+                from arn.ecs import TaskDefinitionArn
+
+                parsed = TaskDefinitionArn(tt2)
+                tt2 = f"{parsed.family}:{parsed.version}"
+            except (InvalidArnException, ImportError):
+                if context.debug:
+                    log.debug(f"Invalid ARN format: {tt2}, using fallback split method")
+                tt2 = tt2.split("/")[-1]
             t1 = tt1 + " = aws_ecs_task_definition." + tt2 + ".arn\n"
             common.add_dependancy("aws_ecs_task_definition", tt2)
         else:

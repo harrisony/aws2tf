@@ -9,6 +9,7 @@ import os
 import sys
 import inspect
 import json
+from arn import Arn, InvalidArnException
 
 
 def extract_resource_id_from_arn(id_or_arn):
@@ -26,26 +27,18 @@ def extract_resource_id_from_arn(id_or_arn):
 
     # If it's an ARN, extract the resource ID
     if id_or_arn.startswith("arn:"):
-        # ARN format: arn:aws:service:region:account:resource-type/resource-id
-        # or: arn:aws:service:region:account:resource-type:resource-id
-        parts = id_or_arn.split(":")
-        if len(parts) >= 6:
-            # The resource part is after the 5th colon
-            resource_part = parts[5]
-            # Handle both / and : as separators
-            if "/" in resource_part:
-                resource_id = resource_part.split("/")[-1]
-            else:
-                resource_id = resource_part
-
+        try:
+            parsed = Arn(id_or_arn)
             if context.debug:
                 log.debug(
-                    f"Extracted resource ID '{resource_id}' from ARN '{id_or_arn}'"
+                    f"Extracted resource ID '{parsed.rest}' from ARN '{id_or_arn}'"
                 )
-            return resource_id
-        else:
+            return parsed.rest
+        except InvalidArnException:
             if context.debug:
-                log.debug(f"Invalid ARN format: {id_or_arn}, using as-is")
+                log.debug(
+                    f"Invalid ARN format: {id_or_arn}, using fallback split method"
+                )
             return id_or_arn
 
     # Not an ARN, return as-is (it's already a resource ID)

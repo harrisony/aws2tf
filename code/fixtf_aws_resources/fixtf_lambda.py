@@ -17,6 +17,7 @@ import context
 import boto3
 from botocore.exceptions import ClientError
 from .base_handler import BaseResourceHandler
+from arn import Arn, InvalidArnException
 
 log = logging.getLogger("aws2tf")
 

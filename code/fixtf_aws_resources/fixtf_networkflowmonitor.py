@@ -2,13 +2,14 @@
 NETWORKFLOWMONITOR Resource Handlers - Optimized with __getattr__
 
 This file contains NETWORKFLOWMONITOR resource handlers.
-All resources use the default handler via __getattr__.
+All resources use default handler via __getattr__.
 
 Auto-generated stub file.
 """
 
 import logging
 from .base_handler import BaseResourceHandler
+from arn import Arn, InvalidArnException
 
 log = logging.getLogger("aws2tf")
 
@@ -59,7 +60,19 @@ def aws_networkflowmonitor_monitor(t1, tt1, tt2, flag1, flag2):
                 )
                 scope_arn = response.get("scopeArn", "")
                 if scope_arn and "/" in scope_arn:
-                    scope_id = scope_arn.split("/")[-1]
+                    try:
+                        parsed = Arn(scope_arn)
+                        scope_id = (
+                            parsed.rest.split("/")[-1]
+                            if parsed.rest
+                            else scope_arn.split("/")[-1]
+                        )
+                    except InvalidArnException:
+                        if context.debug:
+                            log.debug(
+                                f"Invalid ARN format: {scope_arn}, using fallback split method"
+                            )
+                        scope_id = scope_arn.split("/")[-1]
                     t1 = (
                         tt1
                         + " = aws_networkflowmonitor_scope.r-"

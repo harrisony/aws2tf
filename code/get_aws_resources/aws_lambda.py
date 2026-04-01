@@ -11,6 +11,7 @@ import inspect
 import sys
 from botocore.config import Config
 from botocore.exceptions import ClientError
+from arn import Arn, InvalidArnException
 
 
 def get_aws_lambda_layer(type, id, clfn, descfn, topkey, key, filterid):
@@ -51,7 +52,14 @@ def get_aws_lambda_layer(type, id, clfn, descfn, topkey, key, filterid):
 
         else:
             if "arn:" in id:
-                id = id.split(":")[6]
+                try:
+                    parsed = Arn(id)
+                    id = parsed.rest
+                except InvalidArnException:
+                    if context.debug:
+                        log.debug(
+                            f"Invalid ARN format: {id}, using fallback split method"
+                        )
             response = client.list_layer_versions(LayerName=id)
             if response == []:
                 if context.debug:
@@ -99,15 +107,9 @@ def get_aws_lambda_layer_version(type, id, clfn, descfn, topkey, key, filterid):
 
         else:
             if id.startswith("arn:"):
-                larn = id.split(":")[:-1]
-                myarn = ""
-                for ta in larn:
-                    myarn = myarn + ta + ":"
-
-                myarn = myarn.rstrip(":")
-
                 try:
-                    response = client.list_layer_versions(LayerName=myarn)
+                    parsed = Arn(id)
+                    response = client.list_layer_versions(LayerName=parsed.rest)
                 except botocore.exceptions.ClientError as e:
                     log.info(
                         "\nERROR: Lambda function is referencing Lambda Layer - "
@@ -380,14 +382,15 @@ def get_aws_lambda_alias(type, id, clfn, descfn, topkey, key, filterid):
         )
 
     # Extract function name from ARN if needed
-    # ARN format: arn:aws:lambda:region:account:function:function-name:alias-name
-    # We need just the function-name for list_aliases API
     function_name = id
     if id and id.startswith("arn:"):
-        # Split ARN and extract function name (7th part)
-        arn_parts = id.split(":")
-        if len(arn_parts) >= 7:
-            function_name = arn_parts[6]  # function name without alias
+        try:
+            parsed = Arn(id)
+            function_name = parsed.rest
+        except InvalidArnException:
+            if context.debug:
+                log.debug(f"Invalid ARN format: {id}, using fallback split method")
+            pass
 
     response = common.call_boto3(type, clfn, descfn, topkey, key, function_name)
 
@@ -736,7 +739,15 @@ def get_aws_lambda_capacity_provider(type, id, clfn, descfn, topkey, key, filter
             for j in response:
                 # Extract name from ARN: arn:aws:lambda:region:account:capacity-provider:name
                 arn = j[key]
-                name = arn.split(":")[-1]
+                try:
+                    parsed = Arn(arn)
+                    name = parsed.rest
+                except InvalidArnException:
+                    if context.debug:
+                        log.debug(
+                            f"Invalid ARN format: {arn}, using fallback split method"
+                        )
+                    name = arn
                 common.write_import(type, name, None)
         else:
             # Get specific capacity provider
@@ -744,7 +755,15 @@ def get_aws_lambda_capacity_provider(type, id, clfn, descfn, topkey, key, filter
             if response.get("CapacityProvider"):
                 j = response["CapacityProvider"]
                 arn = j[key]
-                name = arn.split(":")[-1]
+                try:
+                    parsed = Arn(arn)
+                    name = parsed.rest
+                except InvalidArnException:
+                    if context.debug:
+                        log.debug(
+                            f"Invalid ARN format: {arn}, using fallback split method"
+                        )
+                    name = arn
                 common.write_import(type, name, None)
 
     except Exception as e:
