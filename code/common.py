@@ -80,7 +80,7 @@ def run_terraform_plan_with_progress(
 
         # Use adaptive rate from previous runs, or default estimate
         # Typical rate: 20-30 resources/second for plan
-        estimated_rate = context.terraform_plan_rate
+        estimated_rate = context.TERRAFORM_PLAN_RATE
         estimated_time = total_resources / estimated_rate
 
         # Show estimated progress with 75% cap
@@ -122,16 +122,16 @@ def run_terraform_plan_with_progress(
             )
 
             # Update adaptive rate (exponential moving average)
-            if context.terraform_plan_samples == 0:
+            if context.TERRAFORM_PLAN_SAMPLES == 0:
                 # First sample - use it directly
-                context.terraform_plan_rate = actual_rate
+                context.TERRAFORM_PLAN_RATE = actual_rate
             else:
                 # Weighted average: 70% old rate, 30% new rate
-                context.terraform_plan_rate = (context.terraform_plan_rate * 0.7) + (
+                context.TERRAFORM_PLAN_RATE = (context.TERRAFORM_PLAN_RATE * 0.7) + (
                     actual_rate * 0.3
                 )
 
-            context.terraform_plan_samples += 1
+            context.TERRAFORM_PLAN_SAMPLES += 1
 
             # Record time if requested (for post-import estimate)
             if record_time:
@@ -139,7 +139,7 @@ def run_terraform_plan_with_progress(
 
             if context.debug:
                 log.debug(
-                    f"Terraform plan rate updated: {context.terraform_plan_rate:.2f} resources/sec (sample #{context.terraform_plan_samples})"
+                    f"Terraform plan rate updated: {context.TERRAFORM_PLAN_RATE:.2f} resources/sec (sample #{context.TERRAFORM_PLAN_SAMPLES})"
                 )
                 if record_time:
                     log.debug(f"Recorded plan time: {actual_time:.2f} seconds")
@@ -279,7 +279,7 @@ def run_terraform_apply_with_progress(tfplan_file, plan_json="plan2.json"):
 
         # Use adaptive rate from previous runs, or default estimate
         # Apply is typically faster than plan (50-60 resources/second)
-        estimated_rate = context.terraform_apply_rate
+        estimated_rate = context.TERRAFORM_APPLY_RATE
         estimated_time = total_resources / estimated_rate
 
         # Collect output for return
@@ -361,20 +361,20 @@ def run_terraform_apply_with_progress(tfplan_file, plan_json="plan2.json"):
             )
 
             # Update adaptive rate (exponential moving average)
-            if context.terraform_apply_samples == 0:
+            if context.TERRAFORM_APPLY_SAMPLES == 0:
                 # First sample - use it directly
-                context.terraform_apply_rate = actual_rate
+                context.TERRAFORM_APPLY_RATE = actual_rate
             else:
                 # Weighted average: 70% old rate, 30% new rate
-                context.terraform_apply_rate = (context.terraform_apply_rate * 0.7) + (
+                context.TERRAFORM_APPLY_RATE = (context.TERRAFORM_APPLY_RATE * 0.7) + (
                     actual_rate * 0.3
                 )
 
-            context.terraform_apply_samples += 1
+            context.TERRAFORM_APPLY_SAMPLES += 1
 
             if context.debug:
                 log.debug(
-                    f"Terraform apply rate updated: {context.terraform_apply_rate:.2f} resources/sec (sample #{context.terraform_apply_samples})"
+                    f"Terraform apply rate updated: {context.TERRAFORM_APPLY_RATE:.2f} resources/sec (sample #{context.TERRAFORM_APPLY_SAMPLES})"
                 )
 
         # Create result object
@@ -1216,7 +1216,7 @@ def tfplan3():
         log.error(str(rout.stdout.decode().rstrip()))
         log.error("Validation after fix failed - exiting")
         context.tracking_message = "Validation after fix failed - exiting"
-        log.info("exit 020 %s", str(context.aws2tfver))
+        log.info("exit 020 %s", str(context.AWS2TF_VERSION))
         stop_timer()
         exit()
 
@@ -1229,7 +1229,7 @@ def tfplan3():
 
     ################################################################################
     x = glob.glob("aws_*__*.tf")
-    context.esttime = len(x) / 4
+    context.ESTTIME = len(x) / 4
     awsf = len(x)
     y = glob.glob("import__*.tf")
     impf = len(y)
@@ -1245,7 +1245,7 @@ def tfplan3():
                     + "x import__*.tf file counts do not match"
                 )
                 # log.info("\nLikely import error [1] - do the following and report errors in github issue:")
-                # log.info("cd "+context.path1)
+                # log.info("cd "+context.PATH1)
                 # log.info("terraform plan -generate-config-out=resources.out")
                 fix_imports()
             # exit()
@@ -1363,7 +1363,7 @@ def tfplan3():
                         log.error(
                             "-->> Plan 2 errors exiting - check plan2.json - or run terraform plan"
                         )
-                        log.info("exit 021 %s", str(context.aws2tfver))
+                        log.info("exit 021 %s", str(context.AWS2TF_VERSION))
                         stop_timer()
                         exit()
 
@@ -1491,7 +1491,7 @@ def tfplan3():
                 if context.expected is False:
                     log.info(
                         "You can check the changes by running 'terraform plan' in %s\n",
-                        context.path1,
+                        context.PATH1,
                     )
                     log.info(
                         "Then rerun the same ./aws2tf.py command and add the '-a' flag to accept these plan changes and continue to import"
@@ -1511,7 +1511,7 @@ def tfplan3():
             else:
                 log.error("-->> plan will change resources! - unexpected")
                 log.error("-->> look at plan2.json - or run terraform plan")
-                log.info("exit 025 %s", str(context.aws2tfver))
+                log.info("exit 025 %s", str(context.AWS2TF_VERSION))
                 stop_timer()
                 exit()
 
@@ -1539,7 +1539,7 @@ def tfplan3():
                 log.error(
                     "\nLikely import error [2] - do the following and report errors in github issue"
                 )
-                log.info("cd " + context.path1)
+                log.info("cd " + context.PATH1)
                 log.info("terraform plan -generate-config-out=resources.out")
                 log.info("exit 027")
                 stop_timer()
@@ -1851,7 +1851,7 @@ def rc(cmd):
 
 def fix_imports():
     x = glob.glob("aws_*__*.tf")
-    context.esttime = len(x) / 4
+    context.ESTTIME = len(x) / 4
     awsf = len(x)
     y = glob.glob("import__*.tf")
     impf = len(y)
@@ -1913,7 +1913,7 @@ def check_python_version():
 
 
 def aws_tf(region, args):
-    # os.chdir(context.path1)
+    # os.chdir(context.PATH1)
     # if not os.path.isfile("aws.tf"):
 
     with open("provider.tf", "w") as f3:
@@ -1923,7 +1923,7 @@ def aws_tf(region, args):
         f3.write("    aws = {\n")
         f3.write('      source  = "hashicorp/aws"\n')
         # f3.write('      version = "5.48.0"\n')
-        f3.write('      version = "' + context.tfver + '"\n')
+        f3.write('      version = "' + context.TF_PROVIDER_VERSION + '"\n')
         f3.write("    }\n")
         f3.write("  }\n")
         f3.write("}\n")
@@ -2358,8 +2358,8 @@ def getresource(type, id, clfn, descfn, topkey, key, filterid):
                                 write_import(type, theid, None)
                         except Exception as e:
                             log.error(f"{e=}")
-                            if context.mopup.get(type) is not None:
-                                if id.startswith(context.mopup[type]):
+                            if context.MOPUP.get(type) is not None:
+                                if id.startswith(context.MOPUP[type]):
                                     write_import(type, id, None)
                                     return True
 

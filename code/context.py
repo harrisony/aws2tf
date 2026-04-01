@@ -3,20 +3,20 @@ import logging
 
 log = logging.getLogger("aws2tf")
 
-aws2tfver = "v6273"
-tfver = "6.27.0"
-esttime = 120.0
+AWS2TF_VERSION = "v6273"
+TF_PROVIDER_VERSION = "6.27.0"
+ESTTIME = 120.0
 profile = "default"
 sso = False
 merge = False
 fast = False
 apionly = False
 tracking_message = "aws2tf: Starting, update messages every 20 seconds"
-cores = 2
-cwd = ""
-path1 = ""
-path2 = ""
-path3 = ""
+CORES = 2
+CWD = ""
+PATH1 = ""
+PATH2 = ""
+PATH3 = ""
 processed = []
 dependancies = []
 types = []
@@ -34,11 +34,11 @@ region = "xx-xxxx-x"
 regionl = 0
 
 # Adaptive progress tracking
-terraform_plan_rate = 25.0  # Initial estimate: resources per second
-terraform_plan_samples = 0  # Number of samples collected
-terraform_apply_rate = 50.0  # Initial estimate: resources per second for apply
-terraform_apply_samples = 0  # Number of apply samples collected
-last_plan_time = 0.0  # Time taken for last terraform plan (for post-import estimate)
+TERRAFORM_PLAN_RATE = 25.0  # Initial estimate: resources per second
+TERRAFORM_PLAN_SAMPLES = 0  # Number of samples collected
+TERRAFORM_APPLY_RATE = 50.0  # Initial estimate: resources per second for apply
+TERRAFORM_APPLY_SAMPLES = 0  # Number of apply samples collected
+LAST_PLAN_TIME = 0.0  # Time taken for last terraform plan (for post-import estimate)
 policies = []
 policyarns = []
 roles = []
@@ -104,7 +104,7 @@ rdep = {}
 trdep = {}
 
 # for common boto3
-mopup = {"aws_service_discovery_http_namespace": "ns-"}
+MOPUP = {"aws_service_discovery_http_namespace": "ns-"}
 
 # these skip import - as they can't be imported - or no way to find with boto3
 noimport = {

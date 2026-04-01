@@ -49,9 +49,9 @@ def initialize_cores():
     if logical_cores is None:
         logical_cores = os.cpu_count()
         log.info("Logical cores: " + str(logical_cores))
-        context.cores = logical_cores * 2
-        if context.cores > 16:
-            context.cores = 16
+        context.CORES = logical_cores * 2
+        if context.CORES > 16:
+            context.CORES = 16
     return logical_cores
 
 

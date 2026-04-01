@@ -435,7 +435,7 @@ def parse_and_validate_arguments():
     argParser.add_argument(
         "-tv",
         "--tv",
-        help="Specify version of Terraform AWS provider default = " + context.tfver,
+        help="Specify version of Terraform AWS provider default = " + context.TF_PROVIDER_VERSION,
     )
     argParser.add_argument(
         "-d5", "--debug5", help="debug5 special debug flag", action="store_true"
@@ -515,10 +515,10 @@ def setup_environment_and_context(args):
 
     # Check and validate terraform version
     if args.tv:
-        context.tfver = args.tv
+        context.TF_PROVIDER_VERSION = args.tv
 
     tv = check_terraform_version(timed_interrupt)
-    log.info("Terraform version: %s AWS provider version: %s", tv, context.tfver)
+    log.info("Terraform version: %s AWS provider version: %s", tv, context.TF_PROVIDER_VERSION)
 
     # Setup context flags
     context.expected = args.accept
@@ -1357,7 +1357,7 @@ def main_new():
 
     # Record start time
     starttime = datetime.datetime.now()
-    log.info("aws2tf " + context.aws2tfver + " started at %s" % starttime)
+    log.info("aws2tf " + context.AWS2TF_VERSION + " started at %s" % starttime)
 
     # Phase 1: Parse and validate arguments
     args = parse_and_validate_arguments()

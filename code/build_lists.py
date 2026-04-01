@@ -349,7 +349,7 @@ def build_lists():
         ("Launch templates", fetch_launch_templates),
     ]
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=context.cores) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=context.CORES) as executor:
         # Submit all tasks
         future_to_name = {executor.submit(func): name for name, func in fetch_tasks}
 
@@ -380,7 +380,7 @@ def build_lists():
     # slower - 3m 29s
     ####    role attachments stuff
 
-    # with ThreadPoolExecutor(max_workers=context.cores) as executor14:
+    # with ThreadPoolExecutor(max_workers=context.CORES) as executor14:
     # with ThreadPoolExecutor(max_workers=1) as executor14:
     #    futures = [
     #        executor14.submit(apl_threaded(rn))
@@ -395,7 +395,7 @@ def build_secondary_lists(id=None):
     if id is None:
         st1 = datetime.datetime.now()
         log.info("Building secondary IAM resource lists ...")
-        context.esttime = (len(context.rolelist) * 3) / 4
+        context.ESTTIME = (len(context.rolelist) * 3) / 4
         context.tracking_message = (
             "Stage 2 of 10, Building secondary IAM resource lists ..."
         )
@@ -435,7 +435,7 @@ def build_secondary_lists(id=None):
         log.debug("Fetching policies for %s IAM roles...", rcl)
 
         with concurrent.futures.ThreadPoolExecutor(
-            max_workers=context.cores
+            max_workers=context.CORES
         ) as executor:
             # Submit all role policy fetch tasks
             future_to_role = {

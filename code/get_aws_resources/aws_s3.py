@@ -223,7 +223,7 @@ def get_all_s3_buckets(fb, my_region):
 
         # check can access
         log.debug(f"Checking access to {len(context.bucketlist)} S3 buckets...")
-        with ThreadPoolExecutor(max_workers=context.cores) as executor4:
+        with ThreadPoolExecutor(max_workers=context.CORES) as executor4:
             futures = [
                 executor4.submit(check_access, key, my_region)
                 for key in context.bucketlist.keys()
@@ -274,7 +274,7 @@ def get_all_s3_buckets(fb, my_region):
             leave=False,
         ):
             ### thread thread ?
-            with ThreadPoolExecutor(max_workers=context.cores) as executor3:
+            with ThreadPoolExecutor(max_workers=context.CORES) as executor3:
                 futures = [
                     executor3.submit(get_s3, s3_fields, key, bucket_name)
                     for key in s3_fields
