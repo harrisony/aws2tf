@@ -341,21 +341,7 @@ def get_lambdalayer_code(fn):
 
     try:
         if fn.startswith("arn:"):
-            tarn = (
-                fn.replace("/", "_")
-                .replace(".", "_")
-                .replace(":", "_")
-                .replace("|", "_")
-                .replace("$", "_")
-                .replace(",", "_")
-                .replace("&", "_")
-                .replace("#", "_")
-                .replace("[", "_")
-                .replace("]", "_")
-                .replace("=", "_")
-                .replace("!", "_")
-                .replace(";", "_")
-            )
+            tarn = common.sanitize_identifier(fn)
             clfn = "lambda"
             lc = boto3.client(clfn)
             resp = lc.get_layer_version_by_arn(Arn=fn)
@@ -639,7 +625,7 @@ def get_aws_lambda_layer_version_permission(
             layn = j["LayerVersionArn"]
             ver = j["Version"]
             theid = id + "," + str(ver)
-            altid = theid.replace(",", "_").replace(":", "_").replace("|", "_")
+            altid = common.sanitize_identifier_comma_colon_pipe(theid)
             common.write_import(type, theid, altid)
 
     except Exception as e:

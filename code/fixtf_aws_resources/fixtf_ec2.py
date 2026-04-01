@@ -212,39 +212,11 @@ def aws_instance(t1, tt1, tt2, flag1, flag2):
         elif tt1 == "key_name":
             if tt2 != "null":
                 if not context.dkey:
-                    tfil = (
-                        tt2.replace("/", "_")
-                        .replace(".", "_")
-                        .replace(":", "_")
-                        .replace("|", "_")
-                        .replace("$", "_")
-                        .replace(",", "_")
-                        .replace("&", "_")
-                        .replace("#", "_")
-                        .replace("[", "_")
-                        .replace("]", "_")
-                        .replace("=", "_")
-                        .replace("!", "_")
-                        .replace(";", "_")
-                    )
+                    tfil = common.sanitize_identifier(tt2)
                     t1 = tt1 + " = aws_key_pair." + tfil + ".id\n"
                     common.add_dependancy("aws_key_pair", tt2)
                 else:
-                    tfil = (
-                        tt2.replace("/", "_")
-                        .replace(".", "_")
-                        .replace(":", "_")
-                        .replace("|", "_")
-                        .replace("$", "_")
-                        .replace(",", "_")
-                        .replace("&", "_")
-                        .replace("#", "_")
-                        .replace("[", "_")
-                        .replace("]", "_")
-                        .replace("=", "_")
-                        .replace("!", "_")
-                        .replace(";", "_")
-                    )
+                    tfil = common.sanitize_identifier(tt2)
                     t1 = tt1 + " = data.aws_key_pair." + tfil + ".key_name\n"
                     common.add_dependancy("aws_key_pair", tt2)
 
@@ -488,39 +460,11 @@ def aws_spot_fleet_request(t1, tt1, tt2, flag1, flag2):
         )
     elif tt1 == "key_name" and tt2 != "null":
         if context.dkey:
-            tfil = (
-                tt2.replace("/", "_")
-                .replace(".", "_")
-                .replace(":", "_")
-                .replace("|", "_")
-                .replace("$", "_")
-                .replace(",", "_")
-                .replace("&", "_")
-                .replace("#", "_")
-                .replace("[", "_")
-                .replace("]", "_")
-                .replace("=", "_")
-                .replace("!", "_")
-                .replace(";", "_")
-            )
+            tfil = common.sanitize_identifier(tt2)
             t1 = tt1 + " = data.aws_key_pair." + tfil + ".key_name\n"
             common.add_dependancy("aws_key_pair", tt2)
         else:
-            tfil = (
-                tt2.replace("/", "_")
-                .replace(".", "_")
-                .replace(":", "_")
-                .replace("|", "_")
-                .replace("$", "_")
-                .replace(",", "_")
-                .replace("&", "_")
-                .replace("#", "_")
-                .replace("[", "_")
-                .replace("]", "_")
-                .replace("=", "_")
-                .replace("!", "_")
-                .replace(";", "_")
-            )
+            tfil = common.sanitize_identifier(tt2)
             t1 = tt1 + " = aws_key_pair." + tfil + ".id\n"
             common.add_dependancy("aws_key_pair", tt2)
     return skip, t1, flag1, flag2

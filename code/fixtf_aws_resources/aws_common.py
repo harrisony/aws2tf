@@ -276,39 +276,11 @@ def aws_common(type, t1, tt1, tt2, flag1, flag2):
         elif tt1 == "key_pair":
             if tt2 != "null":
                 if not context.dkey:
-                    tfil = (
-                        tt2.replace("/", "_")
-                        .replace(".", "_")
-                        .replace(":", "_")
-                        .replace("|", "_")
-                        .replace("$", "_")
-                        .replace(",", "_")
-                        .replace("&", "_")
-                        .replace("#", "_")
-                        .replace("[", "_")
-                        .replace("]", "_")
-                        .replace("=", "_")
-                        .replace("!", "_")
-                        .replace(";", "_")
-                    )
+                    tfil = common.sanitize_identifier(tt2)
                     t1 = tt1 + " = aws_key_pair." + tfil + ".key_name\n"
                     common.add_dependancy("aws_key_pair", tt2)
                 else:
-                    tfil = (
-                        tt2.replace("/", "_")
-                        .replace(".", "_")
-                        .replace(":", "_")
-                        .replace("|", "_")
-                        .replace("$", "_")
-                        .replace(",", "_")
-                        .replace("&", "_")
-                        .replace("#", "_")
-                        .replace("[", "_")
-                        .replace("]", "_")
-                        .replace("=", "_")
-                        .replace("!", "_")
-                        .replace(";", "_")
-                    )
+                    tfil = common.sanitize_identifier(tt2)
                     t1 = tt1 + " = data.aws_key_pair." + tfil + ".key_name\n"
                     common.add_dependancy("aws_key_pair", tt2)
             else:
@@ -360,7 +332,7 @@ def aws_common(type, t1, tt1, tt2, flag1, flag2):
 
         elif tt1 == "target_group_arn" and tt2 != "null":
             tgarn = tt2
-            tt2 = tt2.replace("/", "_").replace(".", "_").replace(":", "_")
+            tt2 = common.sanitize_identifier_basic(tt2)
             t1 = tt1 + " = aws_lb_target_group." + tt2 + ".arn\n"
             common.add_dependancy("aws_lb_target_group", tgarn)
 

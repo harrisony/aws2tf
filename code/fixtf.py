@@ -1100,26 +1100,7 @@ def deref_role_arn(t1, tt1, tt2):
             return t1
 
     elif tt2.startswith("arn:aws:elasticloadbalancing"):
-        tarn = (
-            tt2.replace("/", "_")
-            .replace(".", "_")
-            .replace(":", "_")
-            .replace("|", "_")
-            .replace("$", "_")
-            .replace(",", "_")
-            .replace("&", "_")
-            .replace("#", "_")
-            .replace("[", "_")
-            .replace("]", "_")
-            .replace("=", "_")
-            .replace("!", "_")
-            .replace(";", "_")
-            .replace(" ", "_")
-            .replace("*", "star")
-            .replace("\\052", "star")
-            .replace("@", "_")
-            .replace("\\64", "_")
-        )
+        tarn = common.sanitize_identifier_full(tt2)
         t1 = tt1 + " = aws_lb." + tarn + ".arn\n"
         common.add_dependancy("aws_lb", tt2)
     elif tt2.startswith("arn:aws:wafv2") and ":regional/webacl" in tt2:
@@ -1224,42 +1205,14 @@ def deref_secret_arn_array(t1, tt1, tt2):
             if ":secret:" in tt2:
                 subn = tt2.split(",")[i]
                 sarn = subn
-                tarn = (
-                    tt2.replace("/", "_")
-                    .replace(".", "_")
-                    .replace(":", "_")
-                    .replace("|", "_")
-                    .replace("$", "_")
-                    .replace(",", "_")
-                    .replace("&", "_")
-                    .replace("#", "_")
-                    .replace("[", "_")
-                    .replace("]", "_")
-                    .replace("=", "_")
-                    .replace("!", "_")
-                    .replace(";", "_")
-                )
+                tarn = common.sanitize_identifier(tt2)
                 subs = subs + "aws_secretsmanager_secret." + tarn + ".arn,"
                 common.add_dependancy("aws_secretsmanager_secret", sarn)
 
     if cc == 0:
         if ":secret:" in tt2:
             sarn = tt2
-            tarn = (
-                tt2.replace("/", "_")
-                .replace(".", "_")
-                .replace(":", "_")
-                .replace("|", "_")
-                .replace("$", "_")
-                .replace(",", "_")
-                .replace("&", "_")
-                .replace("#", "_")
-                .replace("[", "_")
-                .replace("]", "_")
-                .replace("=", "_")
-                .replace("!", "_")
-                .replace(";", "_")
-            )
+            tarn = common.sanitize_identifier(tt2)
             subs = subs + "aws_secretsmanager_secret." + tarn + ".arn,"
             common.add_dependancy("aws_secretsmanager_secret", sarn)
 
@@ -1279,27 +1232,14 @@ def deref_elb_arn_array(t1, tt1, tt2):
         for i in range(cc + 1):
             subn = tt2.split(",")[i]
             tarn = subn
-            rarn = (
-                tarn.replace("/", "_")
-                .replace(".", "_")
-                .replace(":", "_")
-                .replace("|", "_")
-                .replace("$", "_")
-            )
-
+            rarn = common.sanitize_identifier_arn5(tarn)
             subn = subn.strip("/")[-1]
             subs = subs + "aws_lb." + rarn + ".arn,"
             common.add_dependancy("aws_lb", tarn)
 
     if cc == 0:
         tarn = tt2
-        rarn = (
-            tarn.replace("/", "_")
-            .replace(".", "_")
-            .replace(":", "_")
-            .replace("|", "_")
-            .replace("$", "_")
-        )
+        rarn = common.sanitize_identifier_arn5(tarn)
         tt2 = tt2.split("/")[-1]
         subs = subs + "aws_lb." + rarn + ".arn,"
         common.add_dependancy("aws_lb", tarn)
@@ -1382,13 +1322,7 @@ def generic_deref_arn(t1, tt1, tt2):
                 subn = tt2.split("/")[-1]
                 subs = subs + subtype + "." + subn + ".arn,"
             else:
-                rarn = (
-                    tarn.replace("/", "_")
-                    .replace(".", "_")
-                    .replace(":", "_")
-                    .replace("|", "_")
-                    .replace("$", "_")
-                )
+                rarn = common.sanitize_identifier_arn5(tarn)
                 subs = subs + subtype + "." + rarn + ".arn,"
             common.add_dependancy(subtype, tarn)
 
@@ -1405,13 +1339,7 @@ def generic_deref_arn(t1, tt1, tt2):
                     subn = tt2.split("/")[-1]
                     subs = subs + subtype + "." + subn + ".arn,"
                 else:
-                    rarn = (
-                        tarn.replace("/", "_")
-                        .replace(".", "_")
-                        .replace(":", "_")
-                        .replace("|", "_")
-                        .replace("$", "_")
-                    )
+                    rarn = common.sanitize_identifier_arn5(tarn)
                     subs = subs + subtype + "." + rarn + ".arn,"
                 common.add_dependancy(subtype, tarn)
 

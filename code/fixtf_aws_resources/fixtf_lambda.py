@@ -85,21 +85,7 @@ def aws_lambda_function(t1, tt1, tt2, flag1, flag2):
                 subn = tt2.split(",")[i]
                 subn = subn.strip(" ").lstrip('"').rstrip('"').strip(" ")
                 if context.acc in subn:
-                    tarn = (
-                        subn.replace("/", "_")
-                        .replace(".", "_")
-                        .replace(":", "_")
-                        .replace("|", "_")
-                        .replace("$", "_")
-                        .replace(",", "_")
-                        .replace("&", "_")
-                        .replace("#", "_")
-                        .replace("[", "_")
-                        .replace("]", "_")
-                        .replace("=", "_")
-                        .replace("!", "_")
-                        .replace(";", "_")
-                    )
+                    tarn = common.sanitize_identifier(subn)
                     common.add_dependancy("aws_lambda_layer_version", subn)
                     builds = builds + "aws_lambda_layer_version." + tarn + ".arn,"
                 else:
@@ -112,27 +98,20 @@ def aws_lambda_function(t1, tt1, tt2, flag1, flag2):
         elif cc == 0:
             if context.acc in tt2:
                 tt2 = tt2.lstrip('"').rstrip('"')
-                larn = tt2.split(":")[:-1]
-                myarn = ""
-                for ta in larn:
-                    myarn = myarn + ta + ":"
-
-                myarn = myarn.rstrip(":")
-                tarn = (
-                    tt2.replace("/", "_")
-                    .replace(".", "_")
-                    .replace(":", "_")
-                    .replace("|", "_")
-                    .replace("$", "_")
-                    .replace(",", "_")
-                    .replace("&", "_")
-                    .replace("#", "_")
-                    .replace("[", "_")
-                    .replace("]", "_")
-                    .replace("=", "_")
-                    .replace("!", "_")
-                    .replace(";", "_")
-                )
+                try:
+                    parsed = Arn(tt2)
+                    myarn = f"{parsed.partition}:{parsed.service}:{parsed.region}:{parsed.account}"
+                except InvalidArnException:
+                    if context.debug:
+                        log.debug(
+                            f"Invalid ARN format: {tt2}, using fallback split method"
+                        )
+                    larn = tt2.split(":")[:-1]
+                    myarn = ""
+                    for ta in larn:
+                        myarn = myarn + ta + ":"
+                    myarn = myarn.rstrip(":")
+                tarn = common.sanitize_identifier(tt2)
                 # test we can get at it before sub
 
                 t1 = tt1 + " = [aws_lambda_layer_version." + tarn + ".arn]\n"

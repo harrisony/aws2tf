@@ -39,6 +39,163 @@ def log_warning(message, *args, **kwargs):
         log.warning(message, *args, **kwargs)
 
 
+def sanitize_identifier(name):
+    """
+    Sanitize identifier by replacing special characters with underscores.
+
+    This is used to create valid Terraform resource names from AWS resource IDs
+    which may contain special characters like /, ., :, |, $, etc.
+
+    Args:
+        name: The identifier string to sanitize
+
+    Returns:
+        Sanitized identifier string
+
+    Example:
+        >>> sanitize_identifier("arn:aws:lambda:us-east-1:123456789:function:my-func")
+        'arn_aws_lambda_us-east-1_123456789_function_my-func'
+    """
+    return (
+        name.replace("/", "_")
+        .replace(".", "_")
+        .replace(":", "_")
+        .replace("|", "_")
+        .replace("$", "_")
+        .replace(",", "_")
+        .replace("&", "_")
+        .replace("#", "_")
+        .replace("[", "_")
+        .replace("]", "_")
+        .replace("=", "_")
+        .replace("!", "_")
+        .replace(";", "_")
+    )
+
+
+def sanitize_identifier_basic(name):
+    """
+    Basic sanitization - replaces common path separators /, ., and :.
+
+    Args:
+        name: The identifier string to sanitize
+
+    Returns:
+        Sanitized identifier string
+
+    Example:
+        >>> sanitize_identifier_basic("arn:aws:s3:::bucket-name")
+        'arn_aws_s3___bucket-name'
+    """
+    return name.replace("/", "_").replace(".", "_").replace(":", "_")
+
+
+def sanitize_identifier_comma_colon_pipe(name):
+    """
+    Sanitization for comma, colon, and pipe characters.
+
+    Args:
+        name: The identifier string to sanitize
+
+    Returns:
+        Sanitized identifier string
+
+    Example:
+        >>> sanitize_identifier_comma_colon_pipe("name,with:comma|and|pipe")
+        'name_with_comma_and_pipe'
+    """
+    return name.replace(",", "_").replace(":", "_").replace("|", "_")
+
+
+def sanitize_identifier_arn5(name):
+    """
+    ARN sanitization for 5 common characters: /, ., :, |, $.
+
+    Args:
+        name: The identifier string to sanitize
+
+    Returns:
+        Sanitized identifier string
+
+    Example:
+        >>> sanitize_identifier_arn5("arn:aws:elasticloadbalancing:region:123:loadbalancer")
+        'arn_aws_elasticloadbalancing_region_123_loadbalancer'
+    """
+    return (
+        name.replace("/", "_")
+        .replace(".", "_")
+        .replace(":", "_")
+        .replace("|", "_")
+        .replace("$", "_")
+    )
+
+
+def sanitize_identifier_extended(name):
+    """
+    Extended sanitization - replaces /, ., :, |, $, &, #, [, ], =, !, ;
+
+    Args:
+        name: The identifier string to sanitize
+
+    Returns:
+        Sanitized identifier string
+
+    Example:
+        >>> sanitize_identifier_extended("arn:aws:lambda:region:123:function:my-func")
+        'arn_aws_lambda_region_123_function_my-func'
+    """
+    return (
+        name.replace("/", "_")
+        .replace(".", "_")
+        .replace(":", "_")
+        .replace("|", "_")
+        .replace("$", "_")
+        .replace("&", "_")
+        .replace("#", "_")
+        .replace("[", "_")
+        .replace("]", "_")
+        .replace("=", "_")
+        .replace("!", "_")
+        .replace(";", "_")
+    )
+
+
+def sanitize_identifier_full(name):
+    """
+    Full sanitization - replaces all common special characters including space, *, @.
+
+    Args:
+        name: The identifier string to sanitize
+
+    Returns:
+        Sanitized identifier string
+
+    Example:
+        >>> sanitize_identifier_full("arn:aws:lambda:region:123:function:my-func*")
+        'arn_aws_lambda_region_123_function_my-funcstar'
+    """
+    return (
+        name.replace("/", "_")
+        .replace(".", "_")
+        .replace(":", "_")
+        .replace("|", "_")
+        .replace("$", "_")
+        .replace(",", "_")
+        .replace("&", "_")
+        .replace("#", "_")
+        .replace("[", "_")
+        .replace("]", "_")
+        .replace("=", "_")
+        .replace("!", "_")
+        .replace(";", "_")
+        .replace(" ", "_")
+        .replace("*", "star")
+        .replace("\\052", "star")
+        .replace("@", "_")
+        .replace("\\64", "_")
+    )
+
+
 def run_terraform_plan_with_progress(
     command, description="Terraform plan", record_time=False
 ):

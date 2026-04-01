@@ -183,21 +183,7 @@ class BaseResourceHandler:
 
         Replaces special characters with underscores.
         """
-        return (
-            name.replace("/", "_")
-            .replace(".", "_")
-            .replace(":", "_")
-            .replace("|", "_")
-            .replace("$", "_")
-            .replace(",", "_")
-            .replace("&", "_")
-            .replace("#", "_")
-            .replace("[", "_")
-            .replace("]", "_")
-            .replace("=", "_")
-            .replace("!", "_")
-            .replace(";", "_")
-        )
+        return common.sanitize_identifier(name)
 
     @staticmethod
     def handle_name_prefix(t1, tt1, tt2, flag1, flag2):

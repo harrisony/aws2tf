@@ -27,7 +27,7 @@ def aws_lb_listener(t1, tt1, tt2, flag1, flag2):
     skip = 0
 
     if "load_balancer_arn" == tt1:
-        tt2 = tt2.replace("/", "_").replace(".", "_").replace(":", "_")
+        tt2 = common.sanitize_identifier_basic(tt2)
         t1 = tt1 + " = aws_lb." + tt2 + ".arn\n"
         t1 = (
             t1
@@ -49,7 +49,7 @@ def aws_lb_listener_rule(t1, tt1, tt2, flag1, flag2):
 
     skip = 0
     if "listener_arn" == tt1:
-        tt2 = tt2.replace("/", "_").replace(".", "_").replace(":", "_")
+        tt2 = common.sanitize_identifier_basic(tt2)
         t1 = tt1 + " = aws_lb_listener." + tt2 + ".arn\n"
         t1 = (
             t1

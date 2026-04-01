@@ -102,39 +102,11 @@ def aws_launch_configuration(t1, tt1, tt2, flag1, flag2):
     elif tt1 == "key_name":
         if tt2 != "null":
             if not context.dkey:
-                tfil = (
-                    tt2.replace("/", "_")
-                    .replace(".", "_")
-                    .replace(":", "_")
-                    .replace("|", "_")
-                    .replace("$", "_")
-                    .replace(",", "_")
-                    .replace("&", "_")
-                    .replace("#", "_")
-                    .replace("[", "_")
-                    .replace("]", "_")
-                    .replace("=", "_")
-                    .replace("!", "_")
-                    .replace(";", "_")
-                )
+                tfil = common.sanitize_identifier(tt2)
                 t1 = tt1 + " = aws_key_pair." + tfil + ".id\n"
                 common.add_dependancy("aws_key_pair", tt2)
             else:
-                tfil = (
-                    tt2.replace("/", "_")
-                    .replace(".", "_")
-                    .replace(":", "_")
-                    .replace("|", "_")
-                    .replace("$", "_")
-                    .replace(",", "_")
-                    .replace("&", "_")
-                    .replace("#", "_")
-                    .replace("[", "_")
-                    .replace("]", "_")
-                    .replace("=", "_")
-                    .replace("!", "_")
-                    .replace(";", "_")
-                )
+                tfil = common.sanitize_identifier(tt2)
                 t1 = tt1 + " = data.aws_key_pair." + tfil + ".key_name\n"
                 common.add_dependancy("aws_key_pair", tt2)
 
